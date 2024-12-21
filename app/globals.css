@@ -39,6 +39,9 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    --primary-button: 33 71% 31%;
+    --primary-container: 29 100% 87%;
+    --on-primary-container: 30 100% 9%;
   }
   .dark {
     --background: 0 0% 3.9%;
@@ -65,6 +68,9 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --primary-button: 31 94% 72%;
+    --primary-container: 35 100% 20%;
+    --on-primary-container: 29 100% 87%;
   }
 }
 

@@ -1,6 +1,3 @@
-import { ModeToggle } from "@/components/mode-toggle";
-import Image from "next/image";
-
 export default function Explore() {
   const divs = [];
 

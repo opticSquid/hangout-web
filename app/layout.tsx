@@ -32,8 +32,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="h-screen flex flex-col">
-            <ModeToggle />
-            <main className="flex-grow overflow-y-auto p-4">{children}</main>
+            <div className="p-2">
+              <ModeToggle />
+            </div>
+            <main className="flex-grow overflow-y-auto pl-2 pr-2 pt-1">
+              {children}
+            </main>
           </div>
           <BottomBar />
         </ThemeProvider>
