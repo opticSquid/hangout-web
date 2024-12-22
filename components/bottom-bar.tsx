@@ -10,7 +10,7 @@ export function BottomBar() {
   const idleButtonStyle: string =
     "bg-transparent text-primary rounded-full transition ease-out duration-100";
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-50 pt-2 pb-2 pl-1 pr-1 bg-background rounded-t-xl drop-shadow-3xl border-t">
+    <footer className="fixed bottom-0 left-0 right-0 z-50 pt-2 pb-2 pl-1 pr-1 bg-background rounded-t-xl border-t">
       <div className="flex justify-around">
         <Button
           className={router == "/" ? activeButtonStyle : idleButtonStyle}
