@@ -1,9 +1,9 @@
+import { BottomBar } from "@/components/bottom-bar";
+import { ThemeProvider } from "@/components/theme-provider";
+import { TopBar } from "@/components/top-bar";
 import type { Metadata } from "next";
 import { Roboto_Flex } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { BottomBar } from "@/components/bottom-bar";
-import { ModeToggle } from "@/components/mode-toggle";
 
 const robotoFlex = Roboto_Flex({
   subsets: ["latin"],
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={` ${robotoFlex.className} antialiased box-border scroll-smooth`}
       >
@@ -32,9 +32,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <div className="h-screen flex flex-col">
-            <div className="p-2">
-              <ModeToggle />
-            </div>
+            <TopBar />
             <main className="flex-grow overflow-y-auto pl-2 pr-2 pt-1">
               {children}
             </main>
