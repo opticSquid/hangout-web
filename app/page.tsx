@@ -1,14 +1,19 @@
-export default function Explore() {
-  const divs = [];
+import { Post } from "@/components/post";
 
-  for (let i = 0; i < 500; i++) {
-    divs.push(i);
-  }
+export default function Explore() {
   return (
-    <div>
-      {divs.map((d) => (
-        <div key={d}>Hello, {d}</div>
-      ))}
+    <div className="flex flex-col gap-2">
+      <Post
+        media="http://localhost:5014/media/242b54b74df667fd27b12fd2c47ed7a68919de6a2a810d745d7c4031bdc48d98c193cd619a0df2baf58b66b998aa2b3852cffc1e87043ec38e2048fa7cf6b5ec/242b54b74df667fd27b12fd2c47ed7a68919de6a2a810d745d7c4031bdc48d98c193cd619a0df2baf58b66b998aa2b3852cffc1e87043ec38e2048fa7cf6b5ec.mpd"
+        mimeType="video/mp4"
+        content="Lorem ipsum dolor sit amet. Et vero repudiandae et error error sit dolorum impedit. Cum asperiores ullam est quia quam et voluptatum voluptatem ad sunt voluptatem ex accusamus dolor. Quo consectetur dignissimos id sint possimus ut quibusdam reiciendis et optio voluptas eum quia omnis. Nam earum temporibus sit dignissimos fugiat est iste rerum sit sint sapiente est beatae doloremque aut modi repudiandae et voluptatem magnam. Ut itaque beatae est enim pariatur est placeat ducimus in natus enim ut dolor dolores. Ad quia architecto hic optio unde 33 consequuntur dolore aut corrupti optio et consequatur fugit. Sed consectetur omnis ex pariatur quia est consectetur molestiae et necessitatibus vitae sit impedit consequatur. Est consectetur sequi aut adipisci aliquid sed iste illo qui excepturi unde non temporibus Quis in recusandae galisum qui nemo deleniti. Est enim officiis vel iure laudantium aut voluptatibus vitae. At facere amet eos ratione voluptatem eos itaque minus. Est quam commodi aut exercitationem eius qui earum saepe ea voluptatem dolor rem voluptatem ipsam rem libero dignissimos. Et rerum iure non perferendis maiores eum maiores natus. Et aspernatur eius aut dolorem quia eos beatae similique. Est dignissimos quis qui facere omnis eos quam odio et excepturi quam a quisquam perspiciatis est temporibus impedit sit saepe repudiandae. Rem magnam odio sed aliquam suscipit sit rerum ipsam. A voluptas itaque et quam aperiam et numquam laudantium aut nesciunt animi non temporibus eius. At laudantium labore aut officiis blanditiis sit nisi quas et reprehenderit quibusdam? Rem nisi voluptas id vero tempore ad optio sunt qui perferendis eaque et voluptatem dolorum ab voluptates delectus."
+        ownerId={0}
+      />
+      <Post
+        media="http://localhost:5014/media/242b54b74df667fd27b12fd2c47ed7a68919de6a2a810d745d7c4031bdc48d98c193cd619a0df2baf58b66b998aa2b3852cffc1e87043ec38e2048fa7cf6b5ec/242b54b74df667fd27b12fd2c47ed7a68919de6a2a810d745d7c4031bdc48d98c193cd619a0df2baf58b66b998aa2b3852cffc1e87043ec38e2048fa7cf6b5ec.mpd"
+        mimeType="video/mp4"
+        ownerId={0}
+      />
     </div>
   );
 }

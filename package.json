@@ -22,6 +22,8 @@
     "react-dom": "^18",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "video.js": "^8.21.0",
+    "videojs-contrib-dash": "^5.1.1",
     "zustand": "^5.0.2"
   },
   "devDependencies": {

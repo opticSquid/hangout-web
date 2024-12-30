@@ -1,5 +1,6 @@
 export interface Post {
-  postContent?: string;
-  postMedia: any;
-  postOwnerId: number;
+  content?: string;
+  media: string;
+  mimeType: string;
+  ownerId: number;
 }

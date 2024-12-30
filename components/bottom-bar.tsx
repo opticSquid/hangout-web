@@ -1,12 +1,12 @@
 "use client";
 import { BadgePlus, Compass, Ticket, User } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
-import Link from "next/link";
 export function BottomBar() {
   const router: string = usePathname();
   const activeButtonStyle: string =
-    "bg-primaryContainer text-onPrimaryContainer rounded-full transition ease-in duration-100";
+    "bg-primaryContainer text-onPrimaryContainer rounded-full transition ease-in duration-500";
   const idleButtonStyle: string =
     "bg-transparent text-primary rounded-full transition ease-out duration-100";
   return (
