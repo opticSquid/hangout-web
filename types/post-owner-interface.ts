@@ -1,4 +1,6 @@
 export interface PostOwner {
   name: string;
-  photo: any;
+  photo: string;
+  category: string;
+  location: string;
 }

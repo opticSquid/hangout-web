@@ -1,9 +1,11 @@
 "use client";
 import type { Post } from "@/types/post-interface";
-import { VideoPlayer } from "./video-player";
-import { Button } from "./ui/button";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
+import { PostOwner } from "@/types/post-owner-interface";
 import { useState } from "react";
+import { PostInteractions } from "./post-interactions";
+import { PostOwnerInfo } from "./post-owner-info";
+import { Button } from "./ui/button";
+import { VideoPlayer } from "./video-player";
 
 export function Post(post: Post) {
   const words: string[] | undefined = post.content?.split(" ");
@@ -15,11 +17,16 @@ export function Post(post: Post) {
   const toggleText = (): void => {
     setIsExpanded(!isExpanded);
   };
+  const postOwner: PostOwner = {
+    name: "Soumalya Bhattacharya",
+    photo: "https://github.com/shadcn.png",
+    category: "Visual Artist",
+    location: "Arambagh, West Bengal, India (2km)",
+  };
   return (
-    <div className="flex flex-col border-b">
-      <div>
-        <VideoPlayer dashSrc={post.media} autoPlay={false} />
-      </div>
+    <div className="flex flex-col relative">
+      <PostOwnerInfo {...postOwner} />
+      <VideoPlayer dashSrc={post.media} autoPlay={false} />
       {post.content ? (
         <span
           className={`pl-2 pr-2 pt-1 ${
@@ -34,18 +41,8 @@ export function Post(post: Post) {
           </Button>
         </span>
       ) : null}
-      <div className="flex flex-row">
-        <Button variant="ghost" size="icon">
-          <Heart />
-        </Button>
-        <Button variant="ghost" size="icon">
-          <MessageCircle />
-        </Button>
-        <div className="grow" />
-        <Button variant="ghost" size="icon">
-          <Share2 />
-        </Button>
-      </div>
+      <div className="text-xs text-neutral-500 pl-2 font-semibold">7m ago</div>
+      <PostInteractions />
     </div>
   );
 }
