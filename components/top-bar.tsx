@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export function TopBar() {
   return (
-    <div className="flex flex-row items-center z-10v drop-shadow-3xl border-b">
+    <div className="flex flex-row items-center z-10 drop-shadow-3xl border-b">
       <div className="flex-none">
         <ModeToggle />
       </div>

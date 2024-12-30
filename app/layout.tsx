@@ -33,11 +33,9 @@ export default function RootLayout({
         >
           <div className="h-screen flex flex-col">
             <TopBar />
-            <main className="flex-grow overflow-y-auto pl-2 pr-2 pt-1">
-              {children}
-            </main>
+            <main className="flex-grow overflow-y-auto">{children}</main>
+            <BottomBar />
           </div>
-          <BottomBar />
         </ThemeProvider>
       </body>
     </html>

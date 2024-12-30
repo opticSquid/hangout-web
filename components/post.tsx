@@ -8,7 +8,10 @@ import { useState } from "react";
 export function Post(post: Post) {
   const words: string[] | undefined = post.content?.split(" ");
   const [isExpanded, setIsExpanded] = useState(false);
-  const previewText: string | undefined = words?.slice(0, 10).join(" ");
+  let previewText: string | undefined = words?.slice(0, 10).join(" ");
+  if (words && words?.length > 10) {
+    previewText += "...";
+  }
   const toggleText = (): void => {
     setIsExpanded(!isExpanded);
   };
@@ -17,18 +20,20 @@ export function Post(post: Post) {
       <div>
         <VideoPlayer dashSrc={post.media} autoPlay={false} />
       </div>
-      <div
-        className={`mt-1 text-sm ${
-          isExpanded ? "max-h-[none]" : "max-h-[200px] overflow-y-auto"
-        }`}
-      >
-        {isExpanded ? post?.content : previewText + "..."}
-        <Button variant="link" onClick={toggleText}>
-          <span className="font-bold">
-            {isExpanded ? "collapse" : "read more"}
-          </span>
-        </Button>
-      </div>
+      {post.content ? (
+        <span
+          className={`pl-2 pr-2 pt-1 ${
+            isExpanded ? "max-h-48 overflow-y-auto" : "max-h-14"
+          }`}
+        >
+          {isExpanded ? post?.content : previewText}
+          <Button variant="link" onClick={toggleText}>
+            <span className="font-bold">
+              {isExpanded ? "collapse" : "read more"}
+            </span>
+          </Button>
+        </span>
+      ) : null}
       <div className="flex flex-row">
         <Button variant="ghost" size="icon">
           <Heart />
