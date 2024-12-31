@@ -1,4 +1,5 @@
-export interface Post {
+export interface PostObject {
+  id: string;
   content?: string;
   media: string;
   mimeType: string;

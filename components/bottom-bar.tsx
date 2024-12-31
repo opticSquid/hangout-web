@@ -1,5 +1,5 @@
 "use client";
-import { BadgePlus, Compass, Ticket, User } from "lucide-react";
+import { BadgePlus, Compass, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";

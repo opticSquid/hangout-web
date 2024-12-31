@@ -1,5 +1,5 @@
 "use client";
-import type { Post } from "@/types/post-interface";
+import type { PostObject } from "@/types/post-interface";
 import { PostOwner } from "@/types/post-owner-interface";
 import { useState } from "react";
 import { PostInteractions } from "./post-interactions";
@@ -7,7 +7,7 @@ import { PostOwnerInfo } from "./post-owner-info";
 import { Button } from "./ui/button";
 import { VideoPlayer } from "./video-player";
 
-export function Post(post: Post) {
+export function Post(post: PostObject) {
   const words: string[] | undefined = post.content?.split(" ");
   const [isExpanded, setIsExpanded] = useState(false);
   let previewText: string | undefined = words?.slice(0, 10).join(" ");
@@ -21,7 +21,7 @@ export function Post(post: Post) {
     name: "Soumalya Bhattacharya",
     photo: "https://github.com/shadcn.png",
     category: "Visual Artist",
-    location: "Arambagh, West Bengal, India (2km)",
+    location: post.location,
   };
   return (
     <div className="flex flex-col relative">
@@ -42,7 +42,7 @@ export function Post(post: Post) {
         </span>
       ) : null}
       <div className="text-xs text-neutral-500 pl-2 font-semibold">7m ago</div>
-      <PostInteractions />
+      <PostInteractions postId={post.id} />
     </div>
   );
 }
