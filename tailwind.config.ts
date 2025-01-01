@@ -53,6 +53,7 @@ const config: Config = {
         primaryButton: "hsl(var(--primary-button))",
         primaryContainer: "hsl(var(--primary-container))",
         onPrimaryContainer: "hsl(var(--on-primary-container))",
+        surfaceContainer: "hsl(var(--on-surface-container))",
       },
       borderRadius: {
         lg: "var(--radius)",

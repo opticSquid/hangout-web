@@ -4,6 +4,7 @@ import { TopBar } from "@/components/top-bar";
 import type { Metadata } from "next";
 import { Roboto_Flex } from "next/font/google";
 import "./globals.css";
+import { SessionStoreProvider } from "@/lib/hooks/session-provider";
 
 const robotoFlex = Roboto_Flex({
   subsets: ["latin"],
@@ -31,13 +32,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="h-screen flex flex-col">
-            <TopBar />
-            <main className="flex-grow overflow-y-auto pl-2 pr-2 pt-1">
-              {children}
-            </main>
-          </div>
-          <BottomBar />
+          <SessionStoreProvider>
+            <div className="h-screen flex flex-col">
+              <TopBar />
+              <main className="flex-grow overflow-y-auto">{children}</main>
+              <BottomBar />
+            </div>
+          </SessionStoreProvider>
         </ThemeProvider>
       </body>
     </html>
