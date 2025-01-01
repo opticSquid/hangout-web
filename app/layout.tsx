@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { Roboto_Flex } from "next/font/google";
 import "./globals.css";
 import { SessionStoreProvider } from "@/lib/hooks/session-provider";
-
+import { CSPostHogProvider } from "./providers";
 const robotoFlex = Roboto_Flex({
   subsets: ["latin"],
   display: "swap",
@@ -23,24 +23,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={` ${robotoFlex.className} antialiased box-border scroll-smooth`}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
+      <CSPostHogProvider>
+        <body
+          className={` ${robotoFlex.className} antialiased box-border scroll-smooth`}
         >
-          <SessionStoreProvider>
-            <div className="h-screen flex flex-col">
-              <TopBar />
-              <main className="grow overflow-y-auto">{children}</main>
-            </div>
-            <BottomBar />
-          </SessionStoreProvider>
-        </ThemeProvider>
-      </body>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <SessionStoreProvider>
+              <div className="h-screen flex flex-col">
+                <TopBar />
+                <main className="grow overflow-y-auto">{children}</main>
+              </div>
+              <BottomBar />
+            </SessionStoreProvider>
+          </ThemeProvider>
+        </body>
+      </CSPostHogProvider>
     </html>
   );
 }
