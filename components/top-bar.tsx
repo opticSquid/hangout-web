@@ -5,18 +5,14 @@ import Link from "next/link";
 
 export function TopBar() {
   return (
-    <div className="flex flex-row items-center z-20 drop-shadow-3xl border-b">
-      <div className="flex-none">
-        <ModeToggle />
-      </div>
-      <div className="flex-1 text-center">HangOut!</div>
-      <div className="flex-none">
-        <Link href="/notifications">
-          <Button variant="link" size="icon">
-            <Bell size={18} />
-          </Button>
-        </Link>
-      </div>
+    <div className="flex flex-row justify-center items-center drop-shadow-3xl border-b">
+      <ModeToggle />
+      <div className="grow text-center">HangOut!</div>
+      <Link href="/notifications">
+        <Button variant="link" size="icon">
+          <Bell size={18} />
+        </Button>
+      </Link>
     </div>
   );
 }

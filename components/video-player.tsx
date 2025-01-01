@@ -30,7 +30,7 @@ export function VideoPlayer(videoPlayerProps: VideoPlayerProps) {
       videoRef.current.appendChild(videoElement);
       playerRef.current = videojs(videoElement, playerOptions);
     }
-  }, [videoPlayerProps.dashSrc]);
+  }, []);
 
   useEffect(() => {
     const player = playerRef.current;

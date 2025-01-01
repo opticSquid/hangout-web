@@ -67,6 +67,9 @@ const config: Config = {
           "0 45px 65px rgba(0, 0, 0, 0.15)",
         ],
       },
+      spacing: {
+        "14/15": "93.33%",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
