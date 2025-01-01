@@ -1,6 +1,6 @@
 "use client";
-import type { PostObject } from "@/types/post-interface";
-import { PostOwner } from "@/types/post-owner-interface";
+import type { PostObject } from "@/lib/types/post-interface";
+import { PostOwner } from "@/lib/types/post-owner-interface";
 import { useState } from "react";
 import { PostInteractions } from "./post-interactions";
 import { PostOwnerInfo } from "./post-owner-info";

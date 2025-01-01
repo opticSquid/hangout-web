@@ -1,6 +1,6 @@
 import { Dot } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { PostOwner } from "@/types/post-owner-interface";
+import { PostOwner } from "@/lib/types/post-owner-interface";
 
 export function PostOwnerInfo(owner: PostOwner) {
   return (

@@ -1,5 +1,5 @@
 "use client";
-import { VideoPlayerProps } from "@/types/video-player-interface";
+import { VideoPlayerProps } from "@/lib/types/video-player-interface";
 import React, { useEffect } from "react";
 import videojs from "video.js";
 import Player from "video.js/dist/types/player";

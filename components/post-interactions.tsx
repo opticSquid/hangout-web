@@ -3,7 +3,7 @@ import { Heart, MessageCircle, Share2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import Link from "next/link";
-import { PostInteraction } from "@/types/post-interaction-interface";
+import { PostInteraction } from "@/lib/types/post-interaction-interface";
 
 export function PostInteractions(postInteraction: PostInteraction) {
   const activeButtonStyle: string =

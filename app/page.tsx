@@ -1,5 +1,5 @@
 import { Post } from "@/components/post";
-import type { PostObject } from "@/types/post-interface";
+import type { PostObject } from "@/lib/types/post-interface";
 export default function Explore() {
   const posts: PostObject[] = [
     {
