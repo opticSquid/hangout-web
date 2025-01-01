@@ -1,5 +1,3 @@
-import { Button } from "./ui/button";
-
 interface Props {
   children: React.ReactNode;
   visible: boolean;

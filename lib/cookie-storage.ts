@@ -19,7 +19,7 @@ const cookiesStorage: StateStorage = {
     return getCookie("hangout-session|" + name) ?? null;
   },
   setItem: (name: string, value: string) => {
-    let body: StorageObjectModel = JSON.parse(value);
+    const body: StorageObjectModel = JSON.parse(value);
     // sets the name of the cookie as <store-name>|<data-name>
     name += "|";
     /**
@@ -27,8 +27,8 @@ const cookiesStorage: StateStorage = {
      * Treats it as a JWT, tries to extract the expiry time and sets it as the cookie's expiry time
      * And if the key does not contain 'Token' as substring it just saves the data to cookie normally
      */
-    for (let k in body.state) {
-      let v = body.state[k as keyof SessionState];
+    for (const k in body.state) {
+      const v = body.state[k as keyof SessionState];
       if (k.includes("Token") && v != undefined) {
         setCookie(name + k, v, {
           expires: extractExpiryFromToken(v as string),

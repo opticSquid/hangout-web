@@ -44,7 +44,6 @@ export function LoginForm({ isSubmitted, onSubmit }: login) {
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-8"
-                aria-disabled={isSubmitted}
               >
                 <FormField
                   control={form.control}
