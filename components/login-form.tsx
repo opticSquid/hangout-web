@@ -113,7 +113,7 @@ export function LoginForm({ isSubmitted, onSubmit }: login) {
               </form>
             </Form>
             <div className="text-sm mt-1">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/signup" className="text-onPrimaryContainer">
                 Signup
               </Link>
