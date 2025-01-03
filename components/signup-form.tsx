@@ -1,6 +1,12 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SignupFormSchema } from "@/lib/types/signup-form-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeClosed } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import {
   Form,
   FormControl,
@@ -9,26 +15,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { LoginFormSchema } from "@/lib/types/loin-form-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeClosed } from "lucide-react";
+} from "./ui/form";
+import { Input } from "./ui/input";
 import Link from "next/link";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
-interface login {
+interface signup {
   isSubmitted: boolean;
-  onSubmit(values: z.infer<typeof LoginFormSchema>): void;
+  onSubmit(values: z.infer<typeof SignupFormSchema>): void;
 }
-export function LoginForm({ isSubmitted, onSubmit }: login) {
+export function SignupForm({ isSubmitted, onSubmit }: signup) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const form = useForm<z.infer<typeof LoginFormSchema>>({
-    resolver: zodResolver(LoginFormSchema),
+  const form = useForm<z.infer<typeof SignupFormSchema>>({
+    resolver: zodResolver(SignupFormSchema),
     defaultValues: {
       username: "",
+      email: "",
       password: "",
     },
   });
@@ -39,7 +40,7 @@ export function LoginForm({ isSubmitted, onSubmit }: login) {
     <div className="flex flex-col h-14/15 w-full justify-center items-center">
       <Card className="w-5/6">
         <CardHeader>
-          <CardTitle>Login</CardTitle>
+          <CardTitle>Signup</CardTitle>
           <CardContent>
             <Form {...form}>
               <form
@@ -62,6 +63,27 @@ export function LoginForm({ isSubmitted, onSubmit }: login) {
                       </FormControl>
                       <FormDescription>
                         Username should be unique
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          placeholder="chill@guy.com"
+                          {...field}
+                          disabled={isSubmitted}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Email should be a valid Email address
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -108,14 +130,14 @@ export function LoginForm({ isSubmitted, onSubmit }: login) {
                   }
                   disabled={isSubmitted}
                 >
-                  Login
+                  Signup
                 </Button>
               </form>
             </Form>
             <div className="text-sm mt-1">
-              Don't have an account?{" "}
-              <Link href="/signup" className="text-onPrimaryContainer">
-                Signup
+              Already have an account?{" "}
+              <Link href="/login" className="text-onPrimaryContainer">
+                Login
               </Link>
             </div>
           </CardContent>
