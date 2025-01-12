@@ -3,7 +3,6 @@ import { EmailVerificationAlert } from "@/components/email-verification-alert";
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { SignupForm } from "@/components/signup-form";
 import { SignupFormSchema } from "@/lib/types/signup-form-schema";
-import { SignupResponse } from "@/lib/types/signup-response-interface";
 import { useState } from "react";
 import { z } from "zod";
 
@@ -24,7 +23,6 @@ export default function Signup() {
         }
       );
       if (response.status === 200) {
-        const data: SignupResponse = await response.json();
         setShowAlert(true);
       }
     } catch (error: unknown) {

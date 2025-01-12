@@ -24,13 +24,13 @@ export const createPersistentSessionStore = (
     persist(
       immer((set, get) => ({
         ...initState,
-        setAccessToken: (newToken: string) => {
+        setAccessToken: (newToken: string | undefined) => {
           set({ accessToken: newToken });
         },
-        setRefreshToken: (newToken: string) => {
+        setRefreshToken: (newToken: string | undefined) => {
           set({ refreshToken: newToken });
         },
-        setTrustedSession: (isTrusted: boolean) => {
+        setTrustedSession: (isTrusted: boolean | undefined) => {
           set({ trustedSesion: isTrusted });
         },
         checkIfAuthenticated: () => {
@@ -50,6 +50,7 @@ export const createPersistentSessionStore = (
             if (!error) state?.setHydrated();
           };
         },
+
         storage: createJSONStorage(() => cookieStorage),
       }
     )
