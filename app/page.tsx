@@ -94,6 +94,8 @@ export default function Explore() {
         .then((registration) => {
           if (refreshToken) {
             console.info("user logged in, starting the timer to renew tokens");
+            // ** This call immidiate after loading is required becuase we need to get a new token after a user had went offline for some time and came back
+            createRenewTokenEvent(registration);
             setInterval(() => {
               console.log("firing renew token request event");
               createRenewTokenEvent(registration);
