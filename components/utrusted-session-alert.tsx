@@ -1,30 +1,36 @@
 "use client";
-import { LoadingOverlay } from "@/components/loading-overlay";
-import { LoginForm } from "@/components/login-form";
-import { UntrustedSessionAlert } from "@/components/utrusted-session-alert";
 import { useSessionStore } from "@/lib/hooks/session-provider";
 import {
   DeviceInfo,
   OS,
   ScreenDimensions,
 } from "@/lib/types/device-identifier-interface";
-import { ErrorResponse } from "@/lib/types/error-response-interface";
 import { Session } from "@/lib/types/login-response-interface";
-import { LoginFormSchema } from "@/lib/types/loin-form-schema";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { z } from "zod";
-
-export default function Login() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+import { LoadingOverlay } from "./loading-overlay";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "./ui/alert-dialog";
+interface openDialog {
+  open: boolean;
+}
+export function UntrustedSessionAlert({ open }: openDialog) {
+  const [loading, setLoading] = useState(false);
   const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>({
     os: { name: "", version: "" },
     screen: { height: 0.0, width: 0.0 },
   });
-  const [openUntrustedSessionAlert, setOpenUntrustedSessionAlert] =
-    useState(false);
-  const router = useRouter();
-  const { setAccessToken, setRefreshToken, setTrustedSession } =
+  const router: AppRouterInstance = useRouter();
+  const { accessToken, setAccessToken, setRefreshToken, setTrustedSession } =
     useSessionStore((state) => state);
   useEffect(() => {
     const userAgent = window.navigator.userAgent;
@@ -76,13 +82,11 @@ export default function Login() {
       window.removeEventListener("resize", updateDeviceInfo);
     };
   }, []);
-  async function onSubmit(
-    values: z.infer<typeof LoginFormSchema>
-  ): Promise<void> {
-    setIsSubmitted(true);
+  async function trustDevice(): Promise<void> {
+    setLoading(true);
     try {
       const response: Response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/auth-api/v1/public/login`,
+        `${process.env.NEXT_PUBLIC_BACKEND_BASE_URL}/auth-api/v1/user/trust-device`,
         {
           method: "POST",
           headers: new Headers({
@@ -90,8 +94,8 @@ export default function Login() {
             "screen-height": String(deviceInfo.screen.height),
             "screen-width": String(deviceInfo.screen.width),
             "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
           }),
-          body: JSON.stringify(values),
         }
       );
       if (response.status === 200) {
@@ -100,15 +104,6 @@ export default function Login() {
         setRefreshToken(session.refreshToken);
         setTrustedSession(true);
         router.push("/");
-      } else if (response.status === 307) {
-        const session: Session = await response.json();
-        setAccessToken(session.accessToken);
-        setRefreshToken(session.refreshToken);
-        setTrustedSession(false);
-        setOpenUntrustedSessionAlert(true);
-      } else {
-        const error: ErrorResponse = await response.json();
-        console.error("could not login user", error);
       }
     } catch (error: unknown) {
       console.error(
@@ -116,15 +111,34 @@ export default function Login() {
         error
       );
     } finally {
-      setIsSubmitted(false);
+      setLoading(false);
     }
   }
   return (
-    <>
-      <LoadingOverlay visible={isSubmitted} message="Signing in...">
-        <LoginForm isSubmitted={isSubmitted} onSubmit={onSubmit} />
-      </LoadingOverlay>
-      <UntrustedSessionAlert open={openUntrustedSessionAlert} />
-    </>
+    <LoadingOverlay visible={loading} message="ulocking platform...">
+      <AlertDialog open={open}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>New Device Login Detected</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are logging in through this device for the first time. Do you
+              trust this device? If yes click on <strong>Trust session</strong>
+              button and all capabilities of the platform will be unloked or if
+              you click on <strong>Continue</strong> butoon you will be logged
+              in but only some capabilities of the platform will be available
+              and you will automatically be logged out within 10 mins
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => router.push("/")}>
+              Continue
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={trustDevice}>
+              Trust session
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </LoadingOverlay>
   );
 }
