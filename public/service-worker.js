@@ -18,7 +18,11 @@ const messageEvent = () => {
     switch (data.type) {
       case "renew-token-request":
         console.log("renew-token-request received");
-        const res = await renewToken(data.refreshToken, data.deviceInfo);
+        const res = await renewToken(
+          data.refreshToken,
+          data.deviceInfo,
+          data.backendUrl
+        );
         console.log("firing access token renew response");
         event.source.postMessage({
           type: "renew-token-response",
@@ -31,21 +35,18 @@ const messageEvent = () => {
 };
 messageEvent();
 
-const renewToken = async (refreshToken, deviceInfo) => {
+const renewToken = async (refreshToken, deviceInfo, backendUrl) => {
   try {
-    const response = await fetch(
-      "http://localhost:80/auth-api/v1/public/renew",
-      {
-        method: "POST",
-        headers: new Headers({
-          os: deviceInfo.os.name,
-          "screen-height": String(deviceInfo.screen.height),
-          "screen-width": String(deviceInfo.screen.width),
-          "Content-Type": "application/json",
-        }),
-        body: JSON.stringify({ token: refreshToken }),
-      }
-    );
+    const response = await fetch(`${backendUrl}/auth-api/v1/public/renew`, {
+      method: "POST",
+      headers: new Headers({
+        os: deviceInfo.os.name,
+        "screen-height": String(deviceInfo.screen.height),
+        "screen-width": String(deviceInfo.screen.width),
+        "Content-Type": "application/json",
+      }),
+      body: JSON.stringify({ token: refreshToken }),
+    });
     if (response.ok) {
       console.log("access token renewed");
       const data = await response.json();

@@ -86,6 +86,7 @@ export default function Explore() {
         type: "renew-token-request",
         refreshToken: refreshToken,
         deviceInfo: deviceInfo,
+        backendUrl: process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
       });
     }
     if ("serviceWorker" in navigator) {
