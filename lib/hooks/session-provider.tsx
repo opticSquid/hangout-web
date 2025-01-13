@@ -4,8 +4,15 @@ import {
   createPersistentSessionStore,
   SessionStore,
 } from "@/lib/stores/session-store";
-import { createContext, ReactNode, useContext, useRef } from "react";
-import { useStore } from "zustand";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useStore } from "zustand/react";
 
 export type SessionStoreApi = ReturnType<typeof createPersistentSessionStore>;
 export const SessionStoreContext = createContext<SessionStoreApi | undefined>(

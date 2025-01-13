@@ -1,50 +1,123 @@
+"use client";
 import { Post } from "@/components/post";
+import { posts } from "@/lib/data";
+import { useSessionStore } from "@/lib/hooks/session-provider";
+import {
+  DeviceInfo,
+  OS,
+  ScreenDimensions,
+} from "@/lib/types/device-identifier-interface";
 import type { PostObject } from "@/lib/types/post-interface";
+import { useEffect, useState } from "react";
+import { getCookie } from "typescript-cookie";
 export default function Explore() {
-  const posts: PostObject[] = [
-    {
-      media:
-        "http://192.168.142.80:5014/media/242b54b74df667fd27b12fd2c47ed7a68919de6a2a810d745d7c4031bdc48d98c193cd619a0df2baf58b66b998aa2b3852cffc1e87043ec38e2048fa7cf6b5ec/242b54b74df667fd27b12fd2c47ed7a68919de6a2a810d745d7c4031bdc48d98c193cd619a0df2baf58b66b998aa2b3852cffc1e87043ec38e2048fa7cf6b5ec.mpd",
-      mimeType: "video/mp4",
-      content:
-        "Lorem ipsum dolor sit amet. Et vero repudiandae et error error sit dolorum impedit. Cum asperiores ullam est quia quam et voluptatum voluptatem ad sunt voluptatem ex accusamus dolor. Quo consectetur dignissimos id sint possimus ut quibusdam reiciendis et optio voluptas eum quia omnis. Nam earum temporibus sit dignissimos fugiat est iste rerum sit sint sapiente est beatae doloremque aut modi repudiandae et voluptatem magnam. Ut itaque beatae est enim pariatur est placeat ducimus in natus enim ut dolor dolores. Ad quia architecto hic optio unde 33 consequuntur dolore aut corrupti optio et consequatur fugit. Sed consectetur omnis ex pariatur quia est consectetur molestiae et necessitatibus vitae sit impedit consequatur. Est consectetur sequi aut adipisci aliquid sed iste illo qui excepturi unde non temporibus Quis in recusandae galisum qui nemo deleniti. Est enim officiis vel iure laudantium aut voluptatibus vitae. At facere amet eos ratione voluptatem eos itaque minus. Est quam commodi aut exercitationem eius qui earum saepe ea voluptatem dolor rem voluptatem ipsam rem libero dignissimos. Et rerum iure non perferendis maiores eum maiores natus. Et aspernatur eius aut dolorem quia eos beatae similique. Est dignissimos quis qui facere omnis eos quam odio et excepturi quam a quisquam perspiciatis est temporibus impedit sit saepe repudiandae. Rem magnam odio sed aliquam suscipit sit rerum ipsam. A voluptas itaque et quam aperiam et numquam laudantium aut nesciunt animi non temporibus eius. At laudantium labore aut officiis blanditiis sit nisi quas et reprehenderit quibusdam? Rem nisi voluptas id vero tempore ad optio sunt qui perferendis eaque et voluptatem dolorum ab voluptates delectus.",
-      ownerId: 0,
-      id: "0",
-      location: "Arambagh, West Bengal, India",
-      distance: "2",
-      time: "2024-12-01T09:12:01.033Z5:30",
-    },
-    {
-      media:
-        "http://192.168.142.80:5014/media/9f734dc5f11ae3d037e93f4370ede11efb58d5e0fff20ad05bda3446d2f70102b558ecbdadcb4c4fd9d7bebfad80d996e73ff7cb36de35fdad6ecbc0d24ae20a/9f734dc5f11ae3d037e93f4370ede11efb58d5e0fff20ad05bda3446d2f70102b558ecbdadcb4c4fd9d7bebfad80d996e73ff7cb36de35fdad6ecbc0d24ae20a.mpd",
-      mimeType: "video/mp4",
-      ownerId: 0,
-      id: "1",
-      location: "Arambagh, West Bengal, India",
-      distance: "2",
-      time: "2024-12-01T09:12:01.033Z5:30",
-    },
-    {
-      media:
-        "http://192.168.142.80:5014/media/742df1da948fed2d53ae1e4d4515dd8836dce778d1721498d48fd7e384d24986a52a98843a26b290b3325026b5f5dc00a8a85282a207b5260ed93caeb537538f/742df1da948fed2d53ae1e4d4515dd8836dce778d1721498d48fd7e384d24986a52a98843a26b290b3325026b5f5dc00a8a85282a207b5260ed93caeb537538f.mpd",
-      mimeType: "video/mp4",
-      ownerId: 0,
-      id: "2",
-      location: "Arambagh, West Bengal, India",
-      distance: "2",
-      time: "2024-12-01T09:12:01.033Z5:30",
-    },
-    {
-      media:
-        "http://192.168.142.80:5014/media/a858a5ba7e9ae9cd6856733d0ea0e60e5afb2e7bd6d1f9ef78975a0817abe7a7f0f711a9e65e5028912d1ee02039bfccd8f9fc1fcef4ef405f5427c1897424ae/a858a5ba7e9ae9cd6856733d0ea0e60e5afb2e7bd6d1f9ef78975a0817abe7a7f0f711a9e65e5028912d1ee02039bfccd8f9fc1fcef4ef405f5427c1897424ae.mpd",
-      mimeType: "video/mp4",
-      ownerId: 0,
-      id: "3",
-      location: "Arambagh, West Bengal, India",
-      distance: "2",
-      time: "2024-12-01T09:12:01.033Z5:30",
-    },
-  ];
+  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>({
+    os: { name: "", version: "" },
+    screen: { height: 0.0, width: 0.0 },
+  });
+  const { refreshToken, setAccessToken, setRefreshToken, setTrustedSession } =
+    useSessionStore((state) => state);
+  // this useEffect hook collects device info and sets the headers
+  useEffect(() => {
+    const userAgent = window.navigator.userAgent;
+
+    const detectOS = (): OS => {
+      const osMap: { [key: string]: OS } = {
+        windows: { name: "Windows" },
+        macos: { name: "macOS" },
+        linux: { name: "Linux" },
+        android: { name: "Android" },
+        ios: { name: "iOS" },
+      };
+
+      for (const [key, value] of Object.entries(osMap)) {
+        if (userAgent.toLowerCase().includes(key)) {
+          return value;
+        }
+      }
+
+      return { name: "Unknown" };
+    };
+
+    const getScreenDimensions = (): ScreenDimensions => {
+      const { innerWidth, innerHeight } = window;
+      let width = innerWidth;
+      let height = innerHeight;
+
+      if (typeof screen.width === "number") {
+        width = screen.width;
+      }
+      if (typeof screen.height === "number") {
+        height = screen.height;
+      }
+
+      return { width, height };
+    };
+
+    const updateDeviceInfo = () => {
+      setDeviceInfo({
+        os: detectOS(),
+        screen: getScreenDimensions(),
+      });
+    };
+
+    updateDeviceInfo(); // Initial data on component mount
+    window.addEventListener("resize", updateDeviceInfo);
+
+    return () => {
+      window.removeEventListener("resize", updateDeviceInfo);
+    };
+  }, []);
+  //this useEffect hook loads data from cookie storage to state
+  useEffect(() => {
+    const base: string = "hangout-session|";
+    setAccessToken(getCookie(base + "accessToken"));
+    setRefreshToken(getCookie(base + "refreshToken"));
+    setTrustedSession(
+      getCookie(base + "trustedSession")
+        ? getCookie(base + "trustedSession") === "true"
+        : undefined
+    );
+  }, []);
+  // This useEffect hook periodically creates renew token request to renew access token
+  useEffect(() => {
+    function createRenewTokenEvent(registration: ServiceWorkerRegistration) {
+      registration.active?.postMessage({
+        type: "renew-token-request",
+        refreshToken: refreshToken,
+        deviceInfo: deviceInfo,
+        backendUrl: process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
+      });
+    }
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/service-worker.js")
+        .then((registration) => {
+          if (refreshToken) {
+            console.info("user logged in, starting the timer to renew tokens");
+            // ** This call immidiate after loading is required becuase we need to get a new token after a user had went offline for some time and came back
+            createRenewTokenEvent(registration);
+            setInterval(() => {
+              console.log("firing renew token request event");
+              createRenewTokenEvent(registration);
+            }, 5 * 60 * 1000);
+          }
+          console.log(
+            "service worker registered in scope: ",
+            registration.scope
+          );
+        });
+      navigator.serviceWorker.addEventListener("message", (event) => {
+        switch (event.data.type) {
+          case "renew-token-response":
+            setAccessToken(event.data.accessToken);
+            break;
+          default:
+        }
+      });
+    }
+  }, [refreshToken]);
+
   return (
     <div className="flex flex-col gap-2">
       {posts.map((p: PostObject) => (
