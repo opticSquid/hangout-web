@@ -1,10 +1,24 @@
 export interface PostObject {
-  id: string;
-  content?: string;
-  media: string;
-  mimeType: string;
-  location: string;
-  distance: string;
+  postId: string;
   ownerId: number;
-  time: string;
+  filename: string;
+  contentType: string;
+  postDescription?: string;
+  hearts: number;
+  comments: number;
+  interactions: number;
+  createdAt: string;
+  location: location;
+  distance: number;
+}
+
+interface location {
+  type: string;
+  crs: {
+    type: string;
+    properties: {
+      name: string;
+    };
+  };
+  coordinates: number[];
 }

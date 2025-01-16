@@ -121,7 +121,7 @@ export default function Explore() {
   return (
     <div className="flex flex-col gap-2">
       {posts.map((p: PostObject) => (
-        <Post key={p.id} {...p}></Post>
+        <Post key={p.postId} {...p}></Post>
       ))}
     </div>
   );
