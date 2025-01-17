@@ -20,13 +20,17 @@ export function Post(post: PostInterface) {
   const postOwner: PostOwner = {
     name: "Soumalya Bhattacharya",
     photo: "https://github.com/shadcn.png",
-    category: "Visual Artist",
-    location: post.location,
+    state: post.state,
+    city: post.city,
+    distance: post.distance,
   };
   return (
     <div className="flex flex-col relative">
       <PostOwnerInfo {...postOwner} />
-      <VideoPlayer dashSrc={post.filename} autoPlay={false} />
+      {post.contentType.startsWith("video/") ? (
+        <VideoPlayer filename={post.filename} autoPlay={false} />
+      ) : null}
+
       {post.postDescription ? (
         <span
           className={`pl-2 pr-2 pt-1 ${

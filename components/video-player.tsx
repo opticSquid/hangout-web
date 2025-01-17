@@ -7,6 +7,7 @@ import "video.js/dist/video-js.css";
 export function VideoPlayer(videoPlayerProps: VideoPlayerProps) {
   const videoRef = React.useRef<HTMLDivElement>(null);
   const playerRef = React.useRef<Player | null>(null);
+  const extractedFilename = videoPlayerProps.filename.replace(/\.[^.]+$/, "");
   const playerOptions = {
     autoplay: videoPlayerProps.autoPlay,
     preload: "auto",
@@ -18,7 +19,12 @@ export function VideoPlayer(videoPlayerProps: VideoPlayerProps) {
     controls: true,
     fluid: true,
     responsive: true,
-    sources: [{ src: videoPlayerProps.dashSrc, type: "application/dash+xml" }],
+    sources: [
+      {
+        src: `${process.env.NEXT_PUBLIC_MEDIA_SERVER_URL}/${extractedFilename}/${extractedFilename}.mpd`,
+        type: "application/dash+xml",
+      },
+    ],
     userActions: {
       click: true,
     },

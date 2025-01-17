@@ -138,7 +138,7 @@ export default function Explore() {
       const response: Response = await fetch(
         `${process.env.NEXT_PUBLIC_POST_API_URL}/post/near-me`,
         {
-          method: "GET",
+          method: "POST",
           headers: new Headers({
             "Content-Type": "application/json",
           }),

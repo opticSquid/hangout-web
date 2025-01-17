@@ -3,6 +3,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { PostOwner } from "@/lib/types/post-owner-interface";
 
 export function PostOwnerInfo(owner: PostOwner) {
+  const distance =
+    owner.distance / 1000 < 1
+      ? "< 1 km"
+      : (owner.distance / 1000).toFixed(2) + " km";
   return (
     <div className="flex flex-row ml-1">
       <div className="basis-10 flex items-center">
@@ -14,9 +18,13 @@ export function PostOwnerInfo(owner: PostOwner) {
       <div className="ml-1 flex flex-col gap-0">
         <div className="font-semibold mb-0">{owner.name}</div>
         <div className="text-sm font-light tracking-tight flex flex-row items-center">
-          <div>{owner.category}</div>
+          <div className="text-primaryButton font-thin italic">
+            {owner.category ? owner.category : "community post"}
+          </div>
           <Dot size={16} />
-          <div>{owner.location}</div>
+          <div>
+            {owner.city},&nbsp;{owner.state}&nbsp;({distance})
+          </div>
         </div>
       </div>
       <div className="grow"></div>

@@ -1,4 +1,4 @@
 export interface VideoPlayerProps {
-  dashSrc: string;
+  filename: string;
   autoPlay: boolean | string;
 }
