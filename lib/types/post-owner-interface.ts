@@ -1,4 +1,4 @@
-import { Location } from "./post-interface";
+import { Location } from "./location";
 
 export interface PostOwner {
   name: string;

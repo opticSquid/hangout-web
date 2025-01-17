@@ -1,3 +1,5 @@
+import { Location } from "./location";
+
 export interface PostInterface {
   postId: string;
   ownerId: number;
@@ -12,15 +14,4 @@ export interface PostInterface {
   city: string;
   location: Location;
   distance: number;
-}
-
-export interface Location {
-  type: string;
-  crs: {
-    type: string;
-    properties: {
-      name: string;
-    };
-  };
-  coordinates: number[];
 }

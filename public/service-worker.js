@@ -50,7 +50,6 @@ const renewToken = async (refreshToken, deviceInfo, backendUrl) => {
     if (response.ok) {
       console.log("access token renewed");
       const data = await response.json();
-      console.log("response received: ", data);
       return data.accessToken;
     } else {
       console.error(
