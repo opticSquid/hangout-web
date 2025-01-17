@@ -1,6 +1,6 @@
-import { PostObject } from "./types/post-interface";
+import { PostInterface } from "./types/post-interface";
 
-export const posts: PostObject[] = [
+export const posts: PostInterface[] = [
   {
     media:
       "http://192.168.142.80:5014/media/242b54b74df667fd27b12fd2c47ed7a68919de6a2a810d745d7c4031bdc48d98c193cd619a0df2baf58b66b998aa2b3852cffc1e87043ec38e2048fa7cf6b5ec/242b54b74df667fd27b12fd2c47ed7a68919de6a2a810d745d7c4031bdc48d98c193cd619a0df2baf58b66b998aa2b3852cffc1e87043ec38e2048fa7cf6b5ec.mpd",

@@ -1,4 +1,4 @@
-export interface PostObject {
+export interface PostInterface {
   postId: string;
   ownerId: number;
   filename: string;
@@ -8,11 +8,11 @@ export interface PostObject {
   comments: number;
   interactions: number;
   createdAt: string;
-  location: location;
+  location: Location;
   distance: number;
 }
 
-interface location {
+export interface Location {
   type: string;
   crs: {
     type: string;

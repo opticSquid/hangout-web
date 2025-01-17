@@ -1,5 +1,5 @@
 "use client";
-import type { PostObject } from "@/lib/types/post-interface";
+import type { PostInterface } from "@/lib/types/post-interface";
 import { PostOwner } from "@/lib/types/post-owner-interface";
 import { useState } from "react";
 import { PostInteractions } from "./post-interactions";
@@ -7,7 +7,7 @@ import { PostOwnerInfo } from "./post-owner-info";
 import { Button } from "./ui/button";
 import { VideoPlayer } from "./video-player";
 
-export function Post(post: PostObject) {
+export function Post(post: PostInterface) {
   const words: string[] | undefined = post.postDescription?.split(" ");
   const [isExpanded, setIsExpanded] = useState(false);
   let previewText: string | undefined = words?.slice(0, 10).join(" ");
@@ -26,7 +26,7 @@ export function Post(post: PostObject) {
   return (
     <div className="flex flex-col relative">
       <PostOwnerInfo {...postOwner} />
-      <VideoPlayer dashSrc={post.media} autoPlay={false} />
+      <VideoPlayer dashSrc={post.filename} autoPlay={false} />
       {post.postDescription ? (
         <span
           className={`pl-2 pr-2 pt-1 ${

@@ -7,7 +7,7 @@ import {
   OS,
   ScreenDimensions,
 } from "@/lib/types/device-identifier-interface";
-import type { PostObject } from "@/lib/types/post-interface";
+import type { PostInterface } from "@/lib/types/post-interface";
 import { useEffect, useState } from "react";
 import { getCookie } from "typescript-cookie";
 export default function Explore() {
@@ -120,7 +120,7 @@ export default function Explore() {
 
   return (
     <div className="flex flex-col gap-2">
-      {posts.map((p: PostObject) => (
+      {posts.map((p: PostInterface) => (
         <Post key={p.postId} {...p}></Post>
       ))}
     </div>
