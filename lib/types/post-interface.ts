@@ -8,6 +8,8 @@ export interface PostInterface {
   comments: number;
   interactions: number;
   createdAt: string;
+  state: string;
+  city: string;
   location: Location;
   distance: number;
 }
