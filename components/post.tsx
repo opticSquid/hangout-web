@@ -24,10 +24,6 @@ export function Post({ post, canPlayVideo }: PostControls) {
     city: post.city,
     distance: post.distance,
   };
-  useEffect(() => {
-    console.log("post id: ", post.postId);
-    console.log("is post visible: ", canPlayVideo);
-  }, [canPlayVideo]);
   return (
     <div className="flex flex-col relative">
       <PostOwnerInfo {...postOwner} />

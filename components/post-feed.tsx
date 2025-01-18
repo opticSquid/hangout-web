@@ -41,7 +41,7 @@ export function PostFeed() {
       );
       if (response.ok) {
         const data: GetPostResponse = await response.json();
-        setPostList([...postList, ...data.posts]);
+        setPostList((prevState) => [...prevState, ...data.posts]);
         // if total count is undefined which it will be the page beign fetched is the first page maintain the previous value of totalPage
         setPagePointer((prevState: PagePointer) => {
           return {
