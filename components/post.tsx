@@ -2,7 +2,7 @@
 import { PostOwner } from "@/lib/types/post-owner-interface";
 import { PostControls } from "@/lib/types/PostControls";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PostInteractions } from "./post-interactions";
 import { PostOwnerInfo } from "./post-owner-info";
 import { Button } from "./ui/button";
