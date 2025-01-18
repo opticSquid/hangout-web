@@ -105,9 +105,13 @@ export function PostFeed() {
     }
   }, [pagePointer.currentPage]);
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 snap-proximity snap-y">
       {postList.map((p: PostInterface) => (
-        <div key={p.postId} post-id={p.postId} className="post-container">
+        <div
+          key={p.postId}
+          post-id={p.postId}
+          className="post-container snap-center"
+        >
           <Post
             key={p.postId}
             post={p}
