@@ -1,12 +1,11 @@
-"use client";
 import type { PostInterface } from "@/lib/types/post-interface";
 import { PostOwner } from "@/lib/types/post-owner-interface";
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { PostInteractions } from "./post-interactions";
 import { PostOwnerInfo } from "./post-owner-info";
 import { Button } from "./ui/button";
-import { VideoPlayer } from "./video-player";
-
+const ShakaContainer = dynamic(() => import("./shaka-player"), { ssr: false });
 export function Post(post: PostInterface) {
   const words: string[] | undefined = post.postDescription?.split(" ");
   const [isExpanded, setIsExpanded] = useState(false);
@@ -28,7 +27,7 @@ export function Post(post: PostInterface) {
     <div className="flex flex-col relative">
       <PostOwnerInfo {...postOwner} />
       {post.contentType.startsWith("video/") ? (
-        <VideoPlayer filename={post.filename} autoPlay={false} />
+        <ShakaContainer filename={post.filename} autoPlay={true} />
       ) : null}
 
       {post.postDescription ? (

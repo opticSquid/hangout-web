@@ -34,11 +34,13 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <SessionStoreProvider>
+              {/* <LimeplayProvider> */}
               <div className="h-screen flex flex-col">
                 <TopBar />
                 <main className="grow overflow-y-auto">{children}</main>
               </div>
               <BottomBar />
+              {/* </LimeplayProvider> */}
             </SessionStoreProvider>
           </ThemeProvider>
         </body>

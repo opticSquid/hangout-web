@@ -176,6 +176,10 @@ export default function Explore() {
       console.error("Geolocation is not supported by this browser.");
     }
   }, [locationPermissionDenied]);
+  //setting this property for video-js to make it not choose any dimension
+  useEffect(() => {
+    window.VIDEOJS_NO_DYNAMIC_STYLE = true;
+  });
   return (
     <div className="flex flex-col gap-2">
       {getPostsResponse.posts.map((p: PostInterface) => (
