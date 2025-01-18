@@ -7,11 +7,13 @@ class ShakaPlayer extends PureComponent {
   videoContainer: RefObject<HTMLDivElement>;
   video: RefObject<HTMLVideoElement>;
   extractedFilename: string;
+  autoPlay: boolean;
   constructor(props: VideoPlayerProps) {
     super(props);
     this.video = createRef();
     this.videoContainer = createRef();
     this.extractedFilename = props.filename.replace(/\.[^.]+$/, "");
+    this.autoPlay = props.autoPlay;
   }
   componentDidMount() {
     const video = this.video.current;
@@ -37,14 +39,24 @@ class ShakaPlayer extends PureComponent {
       })
       .catch(onError); // onError is executed if the asynchronous load fails.
   }
-  render() {
+  componentDidUpdate(prevProps: VideoPlayerProps) {
     const { autoPlay } = this.props as Readonly<VideoPlayerProps>;
+
+    if (prevProps.autoPlay !== autoPlay) {
+      if (autoPlay) {
+        this.video.current?.play(); // Play the video when autoPlay is true
+      } else {
+        this.video.current?.pause(); // Pause the video when autoPlay is false
+      }
+    }
+  }
+  render() {
     return (
       <div data-shaka-player-container ref={this.videoContainer}>
         {/* video height will be same height as video frame which is 9:16 aspect ratio */}
         <video
           data-shaka-player
-          autoPlay={autoPlay}
+          autoPlay={this.autoPlay}
           loop={true}
           id="video"
           ref={this.video}

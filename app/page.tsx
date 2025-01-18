@@ -1,29 +1,20 @@
 "use client";
-import { Post } from "@/components/post";
+import { PostFeed } from "@/components/post-feed";
 import { useSessionStore } from "@/lib/hooks/session-provider";
 import {
   DeviceInfo,
   OS,
   ScreenDimensions,
 } from "@/lib/types/device-identifier-interface";
-import { GetPostsRequest } from "@/lib/types/get-posts-request";
-import { GetPostResponse } from "@/lib/types/get-posts-response";
-import type { PostInterface } from "@/lib/types/post-interface";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { getCookie } from "typescript-cookie";
-export default function Explore() {
+export default function Home() {
   const deviceInfo = useRef<DeviceInfo>({
     os: { name: "", version: "" },
     screen: { height: 0.0, width: 0.0 },
   });
   const { refreshToken, setAccessToken, setRefreshToken, setTrustedSession } =
     useSessionStore((state) => state);
-  const location = useRef<GeolocationPosition | null>(null);
-  const [locationPermissionDenied, setLocationPermissionDenied] =
-    useState(false);
-  const [getPostsResponse, setGetPostsResponse] = useState<GetPostResponse>({
-    posts: [],
-  });
 
   // this useEffect hook collects device info and sets the headers
   useEffect(() => {
@@ -125,66 +116,10 @@ export default function Explore() {
       });
     }
   }, [refreshToken]);
-  // This useEffect hook gets user's location permission and fetches Posts
-  useEffect(() => {
-    // defining data fetching function
-    async function fetchPosts(lat: number, lon: number): Promise<void> {
-      const getPostsReqBody: GetPostsRequest = {
-        lat: lat,
-        lon: lon,
-        searchRadius: 1500,
-        pageNumber: 1,
-      };
-      const response: Response = await fetch(
-        `${process.env.NEXT_PUBLIC_POST_API_URL}/post/near-me`,
-        {
-          method: "POST",
-          headers: new Headers({
-            "Content-Type": "application/json",
-          }),
-          body: JSON.stringify(getPostsReqBody),
-        }
-      );
-      if (response.ok) {
-        const data: GetPostResponse = await response.json();
-        setGetPostsResponse({
-          posts: [...getPostsResponse.posts, ...data.posts],
-          totalCount: data.totalCount,
-        });
-      } else {
-        console.error("could not fetch posts from backend");
-      }
-    }
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          location.current = position;
-          fetchPosts(
-            location.current.coords.latitude,
-            location.current.coords.longitude
-          );
-        },
-        (error) => {
-          if (error.code === error.PERMISSION_DENIED) {
-            setLocationPermissionDenied(true);
-          } else {
-            console.error("Error getting location: ", error);
-          }
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-    }
-  }, [locationPermissionDenied]);
+
   //setting this property for video-js to make it not choose any dimension
   useEffect(() => {
     window.VIDEOJS_NO_DYNAMIC_STYLE = true;
   });
-  return (
-    <div className="flex flex-col gap-2">
-      {getPostsResponse.posts.map((p: PostInterface) => (
-        <Post key={p.postId} {...p}></Post>
-      ))}
-    </div>
-  );
+  return <PostFeed />;
 }
