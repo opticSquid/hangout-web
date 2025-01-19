@@ -128,12 +128,12 @@ export default function PostFeed() {
   }, [pagePointer.currentPage]);
 
   return (
-    <div className="flex flex-col gap-2 snap-proximity snap-y">
+    <div className="flex flex-col gap-2 snap-mandatory snap-y">
       {Array.from(postList.values()).map((p: PostInterface) => (
         <div
           key={p.postId}
           post-id={p.postId}
-          className="post-container snap-center"
+          className="post-container snap-always snap-start"
         >
           <Post
             key={p.postId}
