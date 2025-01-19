@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { Roboto_Flex } from "next/font/google";
 import "./globals.css";
 import { CSPostHogProvider } from "./providers";
+import { DataInitalizer } from "@/lib/hooks/data-intializer";
 const robotoFlex = Roboto_Flex({
   subsets: ["latin"],
   display: "swap",
@@ -34,13 +35,12 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <SessionStoreProvider>
-              {/* <LimeplayProvider> */}
+              <DataInitalizer />
               <div className="h-screen flex flex-col">
                 <TopBar />
                 <main className="grow overflow-y-auto">{children}</main>
               </div>
               <BottomBar />
-              {/* </LimeplayProvider> */}
             </SessionStoreProvider>
           </ThemeProvider>
         </body>

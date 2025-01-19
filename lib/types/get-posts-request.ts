@@ -1,6 +1,7 @@
 export interface GetPostsRequest {
   lat: number;
   lon: number;
-  searchRadius: number;
+  minSearchRadius: number;
+  maxSearchRadius: number;
   pageNumber: number;
 }

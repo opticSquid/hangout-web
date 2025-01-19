@@ -1,125 +1,147 @@
 "use client";
-import { PostFeed } from "@/components/post-feed";
-import { useSessionStore } from "@/lib/hooks/session-provider";
-import {
-  DeviceInfo,
-  OS,
-  ScreenDimensions,
-} from "@/lib/types/device-identifier-interface";
-import { useEffect, useRef } from "react";
-import { getCookie } from "typescript-cookie";
-export default function Home() {
-  const deviceInfo = useRef<DeviceInfo>({
-    os: { name: "", version: "" },
-    screen: { height: 0.0, width: 0.0 },
+import { Post } from "@/components/post";
+import { GetPostsRequest } from "@/lib/types/get-posts-request";
+import { GetPostResponse } from "@/lib/types/get-posts-response";
+import { PagePointer } from "@/lib/types/page-pointer";
+import { PostInterface } from "@/lib/types/post-interface";
+import { SearchRadius } from "@/lib/types/search-radius";
+import { useEffect, useRef, useState } from "react";
+export default function PostFeed() {
+  const [locationPermissionDenied, setLocationPermissionDenied] =
+    useState(false);
+  const [postList, setPostList] = useState<Map<string, PostInterface>>(
+    new Map()
+  );
+  const [pagePointer, setPagePointer] = useState<PagePointer>({
+    currentPage: 0,
+    totalPages: 1,
   });
-  const { refreshToken, setAccessToken, setRefreshToken, setTrustedSession } =
-    useSessionStore((state) => state);
-
-  // this useEffect hook collects device info and sets the headers
-  useEffect(() => {
-    const userAgent = window.navigator.userAgent;
-
-    const detectOS = (): OS => {
-      const osMap: { [key: string]: OS } = {
-        windows: { name: "Windows" },
-        macos: { name: "macOS" },
-        linux: { name: "Linux" },
-        android: { name: "Android" },
-        ios: { name: "iOS" },
-      };
-
-      for (const [key, value] of Object.entries(osMap)) {
-        if (userAgent.toLowerCase().includes(key)) {
-          return value;
+  const [searchRadius, setSearchRadius] = useState<SearchRadius>({
+    min: 0,
+    max: 1000,
+  });
+  const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
+  const observer = useRef<IntersectionObserver | null>(null);
+  //this function adds to postListMap
+  function appendPostList(newPosts: PostInterface[]) {
+    setPostList((prevState: Map<string, PostInterface>) => {
+      const updatedList = new Map(prevState);
+      newPosts.forEach((post: PostInterface) => {
+        if (!updatedList.has(post.postId)) {
+          updatedList.set(post.postId, post);
         }
+      });
+      return updatedList;
+    });
+  }
+  // defining data fetching function
+  async function fetchPosts(
+    lat: number,
+    lon: number,
+    min: number,
+    max: number,
+    pageNumber: number
+  ): Promise<void> {
+    const getPostsReqBody: GetPostsRequest = {
+      lat: lat,
+      lon: lon,
+      minSearchRadius: min,
+      maxSearchRadius: max,
+      pageNumber: pageNumber,
+    };
+    const response: Response = await fetch(
+      `${process.env.NEXT_PUBLIC_POST_API_URL}/post/near-me`,
+      {
+        method: "POST",
+        headers: new Headers({
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify(getPostsReqBody),
       }
-
-      return { name: "Unknown" };
-    };
-
-    const getScreenDimensions = (): ScreenDimensions => {
-      const { innerWidth, innerHeight } = window;
-      let width = innerWidth;
-      let height = innerHeight;
-
-      if (typeof screen.width === "number") {
-        width = screen.width;
-      }
-      if (typeof screen.height === "number") {
-        height = screen.height;
-      }
-
-      return { width, height };
-    };
-
-    const updateDeviceInfo = () => {
-      deviceInfo.current = {
-        os: detectOS(),
-        screen: getScreenDimensions(),
-      };
-    };
-
-    updateDeviceInfo(); // Initial data on component mount
-    window.addEventListener("resize", updateDeviceInfo);
-
-    return () => {
-      window.removeEventListener("resize", updateDeviceInfo);
-    };
-  }, []);
-  //this useEffect hook loads data from cookie storage to state
-  useEffect(() => {
-    const base: string = "hangout-session|";
-    setAccessToken(getCookie(base + "accessToken"));
-    setRefreshToken(getCookie(base + "refreshToken"));
-    setTrustedSession(
-      getCookie(base + "trustedSession")
-        ? getCookie(base + "trustedSession") === "true"
-        : undefined
     );
-  }, []);
-  // This useEffect hook periodically creates renew token request to renew access token
-  useEffect(() => {
-    function createRenewTokenEvent(registration: ServiceWorkerRegistration) {
-      registration.active?.postMessage({
-        type: "renew-token-request",
-        refreshToken: refreshToken,
-        deviceInfo: deviceInfo.current,
-        backendUrl: process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
+    if (response.ok) {
+      const data: GetPostResponse = await response.json();
+      appendPostList(data.posts);
+      // if total count is undefined which it will be the page beign fetched is the first page maintain the previous value of totalPage
+      setPagePointer((prevState: PagePointer) => {
+        return {
+          currentPage: prevState.currentPage + 1,
+          totalPages: data.totalCount ? data.totalCount : prevState.totalPages,
+        };
       });
+    } else {
+      console.error("could not fetch posts from backend");
     }
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/service-worker.js")
-        .then((registration) => {
-          if (refreshToken) {
-            console.info("user logged in, starting the timer to renew tokens");
-            // ** This call immidiate after loading is required becuase we need to get a new token after a user had went offline for some time and came back
-            createRenewTokenEvent(registration);
-            setInterval(() => {
-              console.log("firing renew token request event");
-              createRenewTokenEvent(registration);
-            }, 5 * 60 * 1000);
+  }
+  // This useEffect hook gets user's location permission and fetches Posts
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // fetch until all the posts have been shown for current search radius
+          if (pagePointer.currentPage <= pagePointer.totalPages) {
+            fetchPosts(
+              position.coords.latitude,
+              position.coords.longitude,
+              searchRadius.min,
+              searchRadius.max,
+              pagePointer.currentPage + 1
+            );
           }
-          console.log(
-            "service worker registered in scope: ",
-            registration.scope
-          );
-        });
-      navigator.serviceWorker.addEventListener("message", (event) => {
-        switch (event.data.type) {
-          case "renew-token-response":
-            setAccessToken(event.data.accessToken);
-            break;
-          default:
+        },
+        (error) => {
+          if (error.code === error.PERMISSION_DENIED) {
+            setLocationPermissionDenied(true);
+          } else {
+            console.error("Error getting location: ", error);
+          }
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, [locationPermissionDenied]);
+
+  // This useEffect hook monitors which video is visible in viewport and plays and pauses for rest
+  useEffect(() => {
+    observer.current = new IntersectionObserver(handleIntersection, {
+      threshold: 0.5,
+    });
+    const postElements = document.querySelectorAll(".post-container");
+    postElements.forEach((el) => observer.current?.observe(el));
+
+    //cleanup on unmount
+    return () => {
+      postElements.forEach((el) => observer.current?.unobserve(el));
+    };
+    function handleIntersection(entries: IntersectionObserverEntry[]) {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setVisiblePostId(entry.target.getAttribute("post-id"));
+        } else {
+          if (entry.target.getAttribute("post-id") === visiblePostId) {
+            setVisiblePostId(null);
+          }
         }
       });
     }
-  }, [refreshToken]);
+  }, [pagePointer.currentPage]);
 
-  //setting this property for video-js to make it not choose any dimension
-  useEffect(() => {
-    window.VIDEOJS_NO_DYNAMIC_STYLE = true;
-  });
-  return <PostFeed />;
+  return (
+    <div className="flex flex-col gap-2 snap-proximity snap-y">
+      {Array.from(postList.values()).map((p: PostInterface) => (
+        <div
+          key={p.postId}
+          post-id={p.postId}
+          className="post-container snap-center"
+        >
+          <Post
+            key={p.postId}
+            post={p}
+            canPlayVideo={p.postId === visiblePostId}
+          />
+        </div>
+      ))}
+    </div>
+  );
 }
