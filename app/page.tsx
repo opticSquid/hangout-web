@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 export default function PostFeed() {
   const [locationPermissionDenied, setLocationPermissionDenied] =
     useState(false);
+  const [loadPosts, setLoadPosts] = useState<boolean>(true);
   const [postList, setPostList] = useState<Map<string, PostInterface>>(
     new Map()
   );
@@ -75,32 +76,35 @@ export default function PostFeed() {
   }
   // This useEffect hook gets user's location permission and fetches Posts
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          // fetch until all the posts have been shown for current search radius
-          if (pagePointer.currentPage <= pagePointer.totalPages) {
-            fetchPosts(
-              position.coords.latitude,
-              position.coords.longitude,
-              searchRadius.min,
-              searchRadius.max,
-              pagePointer.currentPage + 1
-            );
+    if (loadPosts === true) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            // fetch until all the posts have been shown for current search radius
+            if (pagePointer.currentPage <= pagePointer.totalPages) {
+              fetchPosts(
+                position.coords.latitude,
+                position.coords.longitude,
+                searchRadius.min,
+                searchRadius.max,
+                pagePointer.currentPage + 1
+              );
+              setLoadPosts(false);
+            }
+          },
+          (error) => {
+            if (error.code === error.PERMISSION_DENIED) {
+              setLocationPermissionDenied(true);
+            } else {
+              console.error("Error getting location: ", error);
+            }
           }
-        },
-        (error) => {
-          if (error.code === error.PERMISSION_DENIED) {
-            setLocationPermissionDenied(true);
-          } else {
-            console.error("Error getting location: ", error);
-          }
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+      }
     }
-  }, [locationPermissionDenied]);
+  }, [locationPermissionDenied, loadPosts]);
 
   // This useEffect hook monitors which video is visible in viewport and plays and pauses for rest
   useEffect(() => {

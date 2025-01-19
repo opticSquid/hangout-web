@@ -7,12 +7,12 @@ import {
 import { createContext, ReactNode, useContext, useRef } from "react";
 import { useStore } from "zustand/react";
 
-export type SessionStoreApi = ReturnType<typeof createPersistentSessionStore>;
-export const SessionStoreContext = createContext<SessionStoreApi | undefined>(
+type SessionStoreApi = ReturnType<typeof createPersistentSessionStore>;
+const SessionStoreContext = createContext<SessionStoreApi | undefined>(
   undefined
 );
 
-export interface SessionStoreProviderProps {
+interface SessionStoreProviderProps {
   children: ReactNode;
 }
 export const SessionStoreProvider = ({
