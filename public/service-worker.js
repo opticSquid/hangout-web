@@ -15,10 +15,11 @@ activateEvent();
 const messageEvent = () => {
   self.addEventListener("message", async (event) => {
     const data = event.data;
+    let res;
     switch (data.type) {
       case "renew-token-request":
         console.log("renew-token-request received");
-        const res = await renewToken(
+        res = await renewToken(
           data.refreshToken,
           data.deviceInfo,
           data.backendUrl
@@ -29,13 +30,29 @@ const messageEvent = () => {
           accessToken: res,
         });
         break;
+      case "fetch-posts-request":
+        console.log("fetch-posts-request received");
+        res = await fetchPosts(
+          data.lat,
+          data.lon,
+          data.min,
+          data.max,
+          data.pageNumber,
+          data.backendUrl
+        );
+        console.log("firing fetch-posts-response");
+        event.source.postMessage({
+          type: "fetch-posts-response",
+          response: res,
+        });
+        break;
       default:
     }
   });
 };
 messageEvent();
 
-const renewToken = async (refreshToken, deviceInfo, backendUrl) => {
+async function renewToken(refreshToken, deviceInfo, backendUrl) {
   try {
     const response = await fetch(`${backendUrl}/auth-api/v1/public/renew`, {
       method: "POST",
@@ -60,4 +77,31 @@ const renewToken = async (refreshToken, deviceInfo, backendUrl) => {
   } catch (error) {
     console.error("error occured while renewing access token. error: ", error);
   }
-};
+}
+
+// defining data fetching function
+async function fetchPosts(lat, lon, min, max, pageNumber, backendUrl) {
+  const getPostsReqBody = {
+    lat: lat,
+    lon: lon,
+    minSearchRadius: min,
+    maxSearchRadius: max,
+    pageNumber: pageNumber,
+  };
+  const response = await fetch(`${backendUrl}/post/near-me`, {
+    method: "POST",
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+    body: JSON.stringify(getPostsReqBody),
+  });
+  if (response.ok) {
+    const data = await response.json();
+    return {
+      posts: data.posts,
+      totalPages: data.totalPages,
+    };
+  } else {
+    console.error("could not fetch posts from backend");
+  }
+}

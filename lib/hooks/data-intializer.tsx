@@ -112,11 +112,8 @@ export function DataInitalizer() {
           }
         });
       navigator.serviceWorker.addEventListener("message", (event) => {
-        switch (event.data.type) {
-          case "renew-token-response":
-            setAccessToken(event.data.accessToken);
-            break;
-          default:
+        if (event.data.type === "renew-token-response") {
+          setAccessToken(event.data.accessToken);
         }
       });
     }
