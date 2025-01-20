@@ -84,3 +84,24 @@ body {
     @apply bg-background text-foreground;
   }
 }
+.shaka-mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.shaka-shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.shaka-max-w-full {
+  max-width: 100%;
+}
+
+.shaka-w-full {
+  width: 100%;
+}
+
+.shaka-h-full {
+  height: 100%;
+}

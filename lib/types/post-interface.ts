@@ -1,10 +1,17 @@
-export interface PostObject {
-  id: string;
-  content?: string;
-  media: string;
-  mimeType: string;
-  location: string;
-  distance: string;
+import { Location } from "./location";
+
+export interface PostInterface {
+  postId: string;
   ownerId: number;
-  time: string;
+  filename: string;
+  contentType: string;
+  postDescription?: string;
+  hearts: number;
+  comments: number;
+  interactions: number;
+  createdAt: string;
+  state: string;
+  city: string;
+  location: Location;
+  distance: number;
 }
