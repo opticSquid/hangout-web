@@ -209,7 +209,7 @@ export default function PostFeed() {
 
     postElements.forEach((el) => observer.observe(el));
     return () => postElements.forEach((el) => observer.unobserve(el));
-  }, [postList]);
+  }, [postToTriggerDataLoad]);
 
   /**
    * Watches the 75% th element of the list. when that is visible, starts to load additional posts in background
@@ -236,7 +236,7 @@ export default function PostFeed() {
       if (triggerElement) observer.observe(triggerElement);
       return () => observer.unobserve(triggerElement);
     }
-  }, [postList]);
+  }, [postToTriggerDataLoad]);
 
   return (
     <div className="flex flex-col gap-2 snap-mandatory snap-y">
