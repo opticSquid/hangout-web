@@ -103,5 +103,6 @@ async function fetchPosts(lat, lon, min, max, pageNumber, backendUrl) {
     };
   } else {
     console.error("could not fetch posts from backend");
+    return null;
   }
 }
