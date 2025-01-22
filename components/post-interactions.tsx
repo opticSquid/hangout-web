@@ -25,7 +25,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
         <Heart />
       </Button>
       <Button variant="link" size="icon">
-        <Link href={`/posts/${postInteraction.postId}/comments`}>
+        <Link href={`/comments/${postInteraction.postId}`}>
           <MessageCircle />
         </Link>
       </Button>
