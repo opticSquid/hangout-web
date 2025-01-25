@@ -13,7 +13,7 @@ export function BottomBar() {
     <footer className="fixed bottom-0 left-0 right-0 pt-2 pb-2 pl-1 pr-1 z-50 bg-background dark:bg-secondary rounded-t-xl drop-shadow-4xl">
       <div className="flex justify-around">
         <Button
-          className={router == "/" ? activeButtonStyle : idleButtonStyle}
+          className={router === "/" ? activeButtonStyle : idleButtonStyle}
           variant="link"
           size="icon"
         >

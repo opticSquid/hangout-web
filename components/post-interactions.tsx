@@ -4,8 +4,10 @@ import { Button } from "./ui/button";
 import { useState } from "react";
 import Link from "next/link";
 import { PostInteraction } from "@/lib/types/post-interaction-interface";
+import { usePathname } from "next/navigation";
 
 export function PostInteractions(postInteraction: PostInteraction) {
+  const router = usePathname();
   const activeButtonStyle: string =
     "bg-primaryContainer text-onPrimaryContainer rounded-full";
   const idleButtonStyle: string = "bg-transparent text-primary rounded-full";
@@ -14,7 +16,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
     setIsLoved(!isLoved);
   };
   return (
-    <div className="flex flex-row pl-2">
+    <div className="flex flex-row pl-2 space-x-1">
       <Button
         key={isLoved ? 1 : 0}
         variant="ghost"
@@ -24,11 +26,18 @@ export function PostInteractions(postInteraction: PostInteraction) {
       >
         <Heart />
       </Button>
-      <Button variant="link" size="icon">
-        <Link href={`/comments/${postInteraction.postId}`}>
+      {router === `/comments/${postInteraction.postId}` ? (
+        <Button variant="link" size="icon" className={activeButtonStyle}>
           <MessageCircle />
-        </Link>
-      </Button>
+        </Button>
+      ) : (
+        <Button variant="link" size="icon" className={idleButtonStyle}>
+          <Link href={`/comments/${postInteraction.postId}`}>
+            <MessageCircle />
+          </Link>
+        </Button>
+      )}
+
       <div className="grow" />
       <Button variant="ghost" size="icon">
         <Share2 />
