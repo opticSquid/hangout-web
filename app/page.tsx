@@ -239,7 +239,7 @@ export default function PostFeed() {
   }, [postToTriggerDataLoad]);
 
   return (
-    <div className="flex flex-col gap-2 snap-mandatory snap-y">
+    <div className="flex flex-col gap-2 snap-mandatory snap-y pb-12">
       {Array.from(postList.values()).map((p) => (
         <div
           key={p.postId}
