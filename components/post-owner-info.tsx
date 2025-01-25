@@ -2,7 +2,13 @@ import { Dot } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { PostOwner } from "@/lib/types/post-owner-interface";
 
-export function PostOwnerInfo(owner: PostOwner) {
+export function PostOwnerInfo({
+  owner,
+  showDistance,
+}: {
+  owner: PostOwner;
+  showDistance: boolean;
+}) {
   const distance =
     owner.distance / 1000 < 1
       ? "< 1 km"
@@ -23,7 +29,8 @@ export function PostOwnerInfo(owner: PostOwner) {
           </div>
           <Dot size={16} />
           <div>
-            {owner.city},&nbsp;{owner.state}&nbsp;({distance})
+            {owner.city},&nbsp;{owner.state}&nbsp;
+            {showDistance && "(" + distance + ")"}
           </div>
         </div>
       </div>

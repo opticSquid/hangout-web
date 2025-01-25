@@ -8,7 +8,7 @@ import { PostOwnerInfo } from "./post-owner-info";
 import { Button } from "./ui/button";
 import { getTimeDifferenceFromUTC } from "@/lib/time-difference";
 const ShakaContainer = dynamic(() => import("./shaka-player"), { ssr: false });
-export function Post({ post, canPlayVideo }: PostControls) {
+export function Post({ post, canPlayVideo, showDistance }: PostControls) {
   const words: string[] | undefined = post.postDescription?.split(" ");
   const [isExpanded, setIsExpanded] = useState(false);
   let previewText: string | undefined = words?.slice(0, 10).join(" ");
@@ -27,7 +27,7 @@ export function Post({ post, canPlayVideo }: PostControls) {
   };
   return (
     <div className="flex flex-col relative">
-      <PostOwnerInfo {...postOwner} />
+      <PostOwnerInfo owner={postOwner} showDistance={showDistance} />
       {post.contentType.startsWith("video/") ? (
         <ShakaContainer filename={post.filename} autoPlay={canPlayVideo} />
       ) : null}

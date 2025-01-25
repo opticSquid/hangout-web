@@ -1,3 +1,4 @@
+import { AddComment } from "@/components/add-comment";
 import { Comment } from "@/components/comment";
 import { Post } from "@/components/post";
 import type { CommentInterface } from "@/lib/types/comment-interface";
@@ -29,8 +30,9 @@ export default async function Comments({
   const comments: CommentInterface[] = await commentResponse.json();
   const post: ParticularPostInterface = await postResponse.json();
   return (
-    <div className="flex flex-col gap-2 overflow-y-auto pb-12">
-      <Post post={post} canPlayVideo={true} />
+    <div className="flex flex-col gap-y-2 overflow-y-auto pb-14">
+      <Post post={post} canPlayVideo={true} showDistance={false} />
+      <AddComment />
       {comments.map((comment: CommentInterface) => (
         <Comment {...comment} key={comment.commentId} />
       ))}

@@ -239,14 +239,18 @@ export default function PostFeed() {
   }, [postToTriggerDataLoad]);
 
   return (
-    <div className="flex flex-col gap-2 snap-mandatory snap-y pb-12">
+    <div className="flex flex-col gap-y-4 snap-mandatory snap-y pb-12">
       {Array.from(postList.values()).map((p) => (
         <div
           key={p.postId}
           post-id={p.postId}
           className="post-container snap-always snap-start"
         >
-          <Post post={p} canPlayVideo={p.postId === visiblePostId} />
+          <Post
+            post={p}
+            canPlayVideo={p.postId === visiblePostId}
+            showDistance={true}
+          />
         </div>
       ))}
     </div>
