@@ -3,7 +3,7 @@ import { Post } from "@/components/post";
 import { useServiceWorkerStore } from "@/lib/hooks/service-worker-provider";
 import { GetPostResponse } from "@/lib/types/get-posts-response";
 import { PagePointer } from "@/lib/types/page-pointer";
-import { PostInterface } from "@/lib/types/post-interface";
+import { NearbyPostInterface } from "@/lib/types/nearby-post-interface";
 import { SearchRadius } from "@/lib/types/search-radius";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -11,7 +11,7 @@ export default function PostFeed() {
   const locationPermissionDenied = useRef<boolean>(false);
   const [location, setLocation] = useState<GeolocationPosition>();
   const { worker } = useServiceWorkerStore((state) => state);
-  const [postList, setPostList] = useState<Map<string, PostInterface>>(
+  const [postList, setPostList] = useState<Map<string, NearbyPostInterface>>(
     new Map()
   );
   const pagePointer = useRef<PagePointer>({
@@ -35,7 +35,7 @@ export default function PostFeed() {
   /**
    * Updates the post list with new posts while avoiding duplicates.
    */
-  const appendPostList = (newPosts: PostInterface[]) => {
+  const appendPostList = (newPosts: NearbyPostInterface[]) => {
     setPostList((prevState) => {
       const updatedMap = new Map(prevState);
       newPosts.forEach((post) => {

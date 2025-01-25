@@ -1,6 +1,6 @@
 import { Location } from "./location";
 
-export interface PostInterface {
+export interface NearbyPostInterface {
   postId: string;
   ownerId: number;
   filename: string;

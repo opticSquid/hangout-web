@@ -1,6 +1,6 @@
-import { PostInterface } from "./post-interface";
+import { NearbyPostInterface } from "./nearby-post-interface";
 
 export interface PostControls {
-  post: PostInterface;
+  post: NearbyPostInterface;
   canPlayVideo: boolean;
 }
