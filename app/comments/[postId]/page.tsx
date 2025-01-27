@@ -3,7 +3,7 @@ import { Comment } from "@/components/comment";
 import { Post } from "@/components/post";
 import type { CommentInterface } from "@/lib/types/comment-interface";
 import { ParticularPostInterface } from "@/lib/types/particular-post-interface";
-
+import { revalidateTag } from "next/cache";
 export default async function Comments({
   params,
 }: {
@@ -18,6 +18,8 @@ export default async function Comments({
       }`,
       {
         method: "GET",
+        // used to invalidate the cache on new comment addition
+        next: { tags: ["comments"] },
       }
     ),
     fetch(
@@ -29,10 +31,18 @@ export default async function Comments({
   ]);
   const comments: CommentInterface[] = await commentResponse.json();
   const post: ParticularPostInterface = await postResponse.json();
+  async function revalidateComments() {
+    "use server";
+    revalidateTag("comments");
+  }
   return (
     <div className="flex flex-col gap-y-2 overflow-y-auto pb-14">
       <Post post={post} canPlayVideo={true} showDistance={false} />
-      <AddComment />
+      <AddComment
+        postId={(await params).postId}
+        // prop name should end with Action to receive server actions on client component
+        revalidateCommentAction={revalidateComments}
+      />
       {comments.map((comment: CommentInterface) => (
         <Comment {...comment} key={comment.commentId} />
       ))}

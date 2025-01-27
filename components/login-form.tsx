@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { LoginFormSchema } from "@/lib/types/loin-form-schema";
+import { LoginFormSchema } from "@/lib/types/login-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeClosed } from "lucide-react";
 import Link from "next/link";
