@@ -1,10 +1,17 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getTimeDifferenceFromUTC } from "@/lib/time-difference";
 import { CommentInterface } from "@/lib/types/comment-interface";
 import { Dot, MessageSquareReply } from "lucide-react";
+import Link from "next/link";
 import { Button } from "./ui/button";
-import { getTimeDifferenceFromUTC } from "@/lib/time-difference";
 
-export function Comment(comment: CommentInterface) {
+export function Comment({
+  comment,
+  postId,
+}: {
+  comment: CommentInterface;
+  postId: string;
+}) {
   return (
     <>
       <div className="m-1 flex flex-row items-start gap-2 pl-2 pr-2">
@@ -20,14 +27,16 @@ export function Comment(comment: CommentInterface) {
           </div>
           <div className="text-lg">{comment.text}</div>
           <div className="flex flex-row items-start">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-gray-500 dark:text-gray-300 pl-1"
-            >
-              <MessageSquareReply size={18} />
-              &nbsp;reply
-            </Button>
+            <Link href={`/comments/${postId}/reply/${comment.commentId}`}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gray-500 dark:text-gray-300 pl-1"
+              >
+                <MessageSquareReply size={18} />
+                &nbsp;reply
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

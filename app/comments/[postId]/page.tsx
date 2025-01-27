@@ -43,8 +43,12 @@ export default async function Comments({
         // prop name should end with Action to receive server actions on client component
         revalidateCommentAction={revalidateComments}
       />
-      {comments.map((comment: CommentInterface) => (
-        <Comment {...comment} key={comment.commentId} />
+      {comments.map(async (comment: CommentInterface) => (
+        <Comment
+          comment={comment}
+          postId={(await params).postId}
+          key={comment.commentId}
+        />
       ))}
     </div>
   );

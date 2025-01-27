@@ -1,37 +1,57 @@
 "use client";
 
-import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Card } from "./ui/card";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { SendHorizonal } from "lucide-react";
 import { useSessionStore } from "@/lib/hooks/session-provider";
 import { AddCommentRequest } from "@/lib/types/add-comment-request";
+import { SendHorizonal } from "lucide-react";
+import { useState } from "react";
 import { Comment } from "./comment";
-import { revalidateTag } from "next/cache";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
+import { Card } from "./ui/card";
+import { Input } from "./ui/input";
 
 export function AddComment({
   postId,
   revalidateCommentAction,
+  parentCommentId,
 }: {
   postId: string;
   revalidateCommentAction: () => void;
+  parentCommentId?: string;
 }) {
   const { accessToken } = useSessionStore((state) => state);
   const [comment, setComment] = useState("");
   const [showNewComment, setShowNewComment] = useState(false);
   //TODO: add fuction here
   function onSubmit() {
-    const newComment: AddCommentRequest = { postId: postId, comment: comment };
-    fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/comment`, {
-      method: "POST",
-      headers: new Headers({
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      }),
-      body: JSON.stringify(newComment),
-    });
+    if (!parentCommentId) {
+      const newComment: AddCommentRequest = {
+        postId: postId,
+        comment: comment,
+      };
+      fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/comment`, {
+        method: "POST",
+        headers: new Headers({
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify(newComment),
+      });
+    } else {
+      const newReply: AddCommentRequest = {
+        postId: postId,
+        parentCommentId: parentCommentId,
+        comment: comment,
+      };
+      fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/comment/reply`, {
+        method: "POST",
+        headers: new Headers({
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify(newReply),
+      });
+    }
     // revalidate the cached comments
     revalidateCommentAction();
     setShowNewComment(true);
@@ -59,10 +79,13 @@ export function AddComment({
       </Card>
       {showNewComment && (
         <Comment
-          commentId="new"
-          createdAt={new Date().toISOString()}
-          text={comment}
-          userId={0}
+          comment={{
+            commentId: "new comment",
+            createdAt: new Date().toISOString(),
+            text: comment,
+            userId: 0,
+          }}
+          postId={postId}
         />
       )}
     </>
