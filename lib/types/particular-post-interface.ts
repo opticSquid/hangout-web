@@ -1,6 +1,6 @@
 import { Location } from "./location";
 
-export interface PostInterface {
+export interface ParticularPostInterface {
   postId: string;
   ownerId: number;
   filename: string;

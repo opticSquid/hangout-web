@@ -1,6 +1,6 @@
-import { PostInterface } from "./post-interface";
+import { NearbyPostInterface } from "./nearby-post-interface";
 
 export interface GetPostResponse {
-  posts: PostInterface[];
+  posts: NearbyPostInterface[];
   totalPages?: number;
 }

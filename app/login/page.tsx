@@ -10,7 +10,7 @@ import {
 } from "@/lib/types/device-identifier-interface";
 import { ErrorResponse } from "@/lib/types/error-response-interface";
 import { Session } from "@/lib/types/login-response-interface";
-import { LoginFormSchema } from "@/lib/types/loin-form-schema";
+import { LoginFormSchema } from "@/lib/types/login-form-schema";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";

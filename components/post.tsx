@@ -6,8 +6,9 @@ import { useState } from "react";
 import { PostInteractions } from "./post-interactions";
 import { PostOwnerInfo } from "./post-owner-info";
 import { Button } from "./ui/button";
+import { getTimeDifferenceFromUTC } from "@/lib/time-difference";
 const ShakaContainer = dynamic(() => import("./shaka-player"), { ssr: false });
-export function Post({ post, canPlayVideo }: PostControls) {
+export function Post({ post, canPlayVideo, showDistance }: PostControls) {
   const words: string[] | undefined = post.postDescription?.split(" ");
   const [isExpanded, setIsExpanded] = useState(false);
   let previewText: string | undefined = words?.slice(0, 10).join(" ");
@@ -26,7 +27,7 @@ export function Post({ post, canPlayVideo }: PostControls) {
   };
   return (
     <div className="flex flex-col relative">
-      <PostOwnerInfo {...postOwner} />
+      <PostOwnerInfo owner={postOwner} showDistance={showDistance} />
       {post.contentType.startsWith("video/") ? (
         <ShakaContainer filename={post.filename} autoPlay={canPlayVideo} />
       ) : null}
@@ -45,7 +46,9 @@ export function Post({ post, canPlayVideo }: PostControls) {
           </Button>
         </span>
       ) : null}
-      <div className="text-xs text-neutral-500 pl-2 font-semibold">7m ago</div>
+      <div className="text-xs text-neutral-500 pl-2 font-semibold">
+        {getTimeDifferenceFromUTC(post.createdAt)}
+      </div>
       <PostInteractions postId={post.postId} />
     </div>
   );
