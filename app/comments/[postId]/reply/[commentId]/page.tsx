@@ -20,6 +20,8 @@ export default async function Replies({
         }`,
         {
           method: "GET",
+          next: { tags: ["comment"] },
+          cache: "no-cache",
         }
       ),
       fetch(
@@ -28,12 +30,14 @@ export default async function Replies({
             await params
           ).commentId
         }/replies`,
-        { method: "GET", next: { tags: ["replies"] } }
+        { method: "GET", next: { tags: ["replies"] }, cache: "no-cache" }
       ),
       fetch(
         `${process.env.NEXT_PUBLIC_POST_API_URL}/post/${(await params).postId}`,
         {
           method: "GET",
+          next: { tags: ["post"] },
+          cache: "no-cache",
         }
       ),
     ]);
