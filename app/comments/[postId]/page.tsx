@@ -20,12 +20,15 @@ export default async function Comments({
         method: "GET",
         // used to invalidate the cache on new comment addition
         next: { tags: ["comments"] },
+        cache: "no-cache",
       }
     ),
     fetch(
       `${process.env.NEXT_PUBLIC_POST_API_URL}/post/${(await params).postId}`,
       {
         method: "GET",
+        next: { tags: ["post"] },
+        cache: "no-cache",
       }
     ),
   ]);

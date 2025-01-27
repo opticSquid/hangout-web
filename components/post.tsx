@@ -49,7 +49,12 @@ export function Post({ post, canPlayVideo, showDistance }: PostControls) {
       <div className="text-xs text-neutral-500 pl-2 font-semibold">
         {getTimeDifferenceFromUTC(post.createdAt)}
       </div>
-      <PostInteractions postId={post.postId} />
+      <PostInteractions
+        postId={post.postId}
+        heartCount={post.hearts}
+        commentCount={post.comments}
+        interactionCount={post.interactions}
+      />
     </div>
   );
 }

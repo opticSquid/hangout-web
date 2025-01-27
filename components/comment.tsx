@@ -26,7 +26,7 @@ export function Comment({
             <div>{getTimeDifferenceFromUTC(comment.createdAt)}</div>
           </div>
           <div className="text-lg">{comment.text}</div>
-          <div className="flex flex-row items-start">
+          <div className="flex flex-row items-center">
             <Link href={`/comments/${postId}/reply/${comment.commentId}`}>
               <Button
                 variant="ghost"
@@ -37,6 +37,12 @@ export function Comment({
                 &nbsp;reply
               </Button>
             </Link>
+            {comment.replyCount > 0 && (
+              <div className="text-primaryButton">
+                {comment.replyCount}&nbsp;
+                {comment.replyCount > 1 ? "replies" : "reply"}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -3,4 +3,5 @@ export interface CommentInterface {
   createdAt: string;
   text: string;
   userId: number;
+  replyCount: number;
 }
