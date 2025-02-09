@@ -1,3 +1,3 @@
 export interface MediaCaptureProps {
-  onMediaCaptured: (imageBlob: Blob) => void;
+  onMediaCaptured: (mediaBlob: Blob) => void;
 }

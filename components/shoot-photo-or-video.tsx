@@ -5,7 +5,7 @@ import { Circle, CircleStop, FolderOpen, SwitchCamera } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 
-export function DefaultView({ onMediaCaptured }: MediaCaptureProps) {
+export function ShootMedia({ onMediaCaptured }: MediaCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const recordedChunks = useRef<Blob[]>([]);
