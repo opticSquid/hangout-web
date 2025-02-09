@@ -1,40 +1,55 @@
 "use client";
 
-import { MediaCaptureProps } from "@/lib/types/image-capture-props";
+import { MediaCaptureProps } from "@/lib/types/media-capture-props";
+import { Circle, CircleStop, FolderOpen, SwitchCamera } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
-import { Circle, FolderOpen, SwitchCamera } from "lucide-react";
 
-export function DefaultView({
-  onMediaCaptured: onImageCaptured,
-}: MediaCaptureProps) {
+export function DefaultView({ onMediaCaptured }: MediaCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const recordedChunks = useRef<Blob[]>([]);
+
   const [facingMode, setFacingMode] = useState<"user" | "environment">(
     "environment"
   );
-  const [stream, setStream] = useState<MediaStream | null>(null);
+  const stream = useRef<MediaStream | null>(null);
+  const mediaRecorder = useRef<MediaRecorder | null>(null);
+  const [mode, setMode] = useState<"photo" | "video">("video");
+  const [recording, setRecording] = useState(false);
+  const [timer, setTimer] = useState("0:00");
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Function to start the camera
+  /** Start the camera */
   const startCamera = async () => {
     try {
-      if (stream) return; // Prevent multiple streams
+      // Stop any existing stream before starting a new one
+      stopCamera();
 
       const newStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode },
+        audio: mode === "video", // Enable audio only for video mode
       });
 
       if (videoRef.current) {
         videoRef.current.srcObject = newStream;
       }
 
-      setStream(newStream);
+      stream.current = newStream;
     } catch (error) {
       console.error("Error accessing camera:", error);
     }
   };
 
-  // Function to capture and pass image to onImageCaptured
+  /** Stop the camera */
+  const stopCamera = () => {
+    if (stream.current) {
+      stream.current.getTracks().forEach((track) => track.stop());
+      stream.current = null;
+    }
+  };
+
+  /** Capture an image using MediaStream */
   const captureImage = async () => {
     if (!canvasRef.current || !videoRef.current) return;
 
@@ -48,81 +63,144 @@ export function DefaultView({
 
       canvas.toBlob((blob) => {
         if (!blob) return;
-        onImageCaptured(blob); // Call the passed function with captured blob
+        console.log("photo captured");
+        onMediaCaptured(blob);
       }, "image/jpeg");
     }
   };
-  // Function to stop the camera
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
+
+  /** Start recording using MediaRecorder */
+  const startRecording = () => {
+    if (!stream.current) return;
+
+    const recorder = new MediaRecorder(stream.current, {
+      mimeType: "video/webm",
+    });
+    recorder.ondataavailable = (event) => {
+      if (event.data.size > 0) recordedChunks.current.push(event.data);
+    };
+
+    recorder.onstop = () => {
+      const videoBlob = new Blob(recordedChunks.current, {
+        type: "video/webm",
+      });
+      onMediaCaptured(videoBlob);
+      recordedChunks.current = [];
+      mediaRecorder.current = null;
+      setRecording(false);
+      clearInterval(timerIntervalRef.current as NodeJS.Timeout); // Clear the timer
+      setTimer("0:00"); // Reset the timer display
+      console.log("video captured");
+    };
+
+    recorder.start();
+    mediaRecorder.current = recorder;
+    setRecording(true);
+    startTimer(); // Start the timer when recording begins
+  };
+
+  const startTimer = () => {
+    let seconds = 0;
+    let minutes = 0;
+    timerIntervalRef.current = setInterval(() => {
+      seconds++;
+      console.log("+1 sec");
+      if (seconds === 60) {
+        console.log("1 min done");
+        minutes++;
+        seconds = 0;
+        stopRecording();
+      }
+      const formattedTime = `${minutes.toString().padStart(1, "0")}:${seconds
+        .toString()
+        .padStart(2, "0")}`;
+      setTimer(formattedTime);
+    }, 1000);
+  };
+
+  /** Stop recording */
+  const stopRecording = () => {
+    if (mediaRecorder.current) {
+      mediaRecorder.current.stop();
     }
   };
 
+  /** Switch camera */
   const switchCamera = () => {
     setFacingMode((prevState) =>
       prevState === "user" ? "environment" : "user"
     );
   };
 
-  // Handle tab visibility change (pause when minimized or switched)
-  useEffect(() => {
-    console.log("visibility state changed to: ", document.visibilityState);
-    switch (document.visibilityState) {
-      case "visible":
-        startCamera();
-        break;
-      case "hidden":
-        stopCamera();
-        break;
-      default:
-        console.error("document visibility state not supported");
-    }
-    // document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => stopCamera();
-    //   document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [document.visibilityState]);
-
-  // Start camera when component mounts or facingMode changes
+  /** Restart camera on mode change */
   useEffect(() => {
     startCamera();
-    return () => stopCamera(); // Stop camera when component unmounts
-  }, [facingMode]); // Only re-run when facingMode changes
+    return () => stopCamera();
+  }, [facingMode, mode]);
 
   return (
     <div className="relative w-full h-full flex flex-col items-center">
+      {recording && (
+        <div className="absolute top-1 bg-black/50 rounded-xl px-2 py-1 z-10 font-light">
+          <div className="flex flex-row items-center space-x-1 animate-pulse">
+            <Circle fill="red" size="12" />
+            <span>{timer}</span>
+          </div>
+        </div>
+      )}
+
       <video
         ref={videoRef}
         autoPlay
         playsInline
+        muted
         className="h-full w-auto max-w-full object-cover"
       />
       <canvas ref={canvasRef} className="hidden" />
-      <div className="absolute bottom-20 w-5/6 flex flex-row justify-between">
-        <Button
-          className="px-4 py-2 text-white rounded-lg shadow-md"
-          variant="ghost"
-          size="icon"
-        >
-          <FolderOpen size={48} />
-        </Button>
-        <Button
-          onClick={captureImage}
-          className="px-4 py-2 text-white rounded-lg shadow-md"
-          variant="ghost"
-          size="icon"
-        >
-          <Circle size={48} />
-        </Button>
-        <Button
-          onClick={switchCamera}
-          className="px-4 py-2 text-white rounded-lg shadow-md"
-          variant="ghost"
-          size="icon"
-        >
-          <SwitchCamera size={48} />
-        </Button>
+
+      <div className="absolute bottom-20 w-5/6 flex flex-col space-y-6">
+        <div className="flex flex-row justify-center">
+          <Button
+            size="sm"
+            variant={mode === "photo" ? "default" : "ghost"}
+            className="rounded-xl"
+            onClick={() => setMode("photo")}
+          >
+            Photo
+          </Button>
+          <Button
+            size="sm"
+            variant={mode === "video" ? "default" : "ghost"}
+            className="rounded-xl"
+            onClick={() => setMode("video")}
+          >
+            Video
+          </Button>
+        </div>
+
+        <div className="flex justify-between">
+          <Button variant="ghost" size="icon">
+            <FolderOpen size={36} />
+          </Button>
+
+          {mode === "photo" ? (
+            <Button onClick={captureImage} variant="ghost" size="icon">
+              <Circle size={60} />
+            </Button>
+          ) : recording ? (
+            <Button onClick={stopRecording} variant="ghost" size="icon">
+              <CircleStop size={60} stroke="red" />
+            </Button>
+          ) : (
+            <Button onClick={startRecording} variant="ghost" size="icon">
+              <Circle size={60} fill="red" />
+            </Button>
+          )}
+
+          <Button onClick={switchCamera} variant="ghost" size="icon">
+            <SwitchCamera size={36} />
+          </Button>
+        </div>
       </div>
     </div>
   );
