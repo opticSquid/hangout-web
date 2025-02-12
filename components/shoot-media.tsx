@@ -1,11 +1,11 @@
 "use client";
 
-import { MediaCaptureProps } from "@/lib/types/media-capture-props";
+import { ShootMediaProps } from "@/lib/types/shoot-media-props";
 import { Circle, CircleStop, FolderOpen, SwitchCamera } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 
-export function ShootMedia({ onMediaCaptured }: MediaCaptureProps) {
+export function ShootMedia({ onMediaCaptured }: ShootMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const recordedChunks = useRef<Blob[]>([]);

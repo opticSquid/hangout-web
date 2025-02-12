@@ -3,15 +3,13 @@ import { RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-export function PostContent({
+import { AddContentDescriptionProps } from "@/lib/types/add-content-description-props";
+export function AddContentDescription({
   blob,
-  type,
+  mediaType,
   onRetake,
-}: {
-  blob: Blob;
-  type: "image/jpeg" | "video/webm";
-  onRetake: () => void;
-}) {
+  onAddDescription,
+}: AddContentDescriptionProps) {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
   const [description, setDescription] = useState<string>("");
   useEffect(() => {
@@ -36,25 +34,11 @@ export function PostContent({
   if (!dataUrl) {
     return <div>Loading...</div>;
   }
-  async function onSubmit() {
-    const url: string = description
-      ? `${process.env.NEXT_PUBLIC_POST_API_URL}/post/full`
-      : `${process.env.NEXT_PUBLIC_POST_API_URL}/post/short`;
-    const formData = new FormData();
-    formData.append(
-      "file",
-      blob,
-      type === "image/jpeg" ? "uploaded-media.jpg" : "uploaded-media.webm"
-    );
-    if (description) {
-      formData.append("postDescription", description);
-    }
-    //TODO: add lat, lon, state, city
-  }
+
   return (
-    <div className="h-full flex flex-col space-y-4 items-center">
+    <div className="h-full flex flex-col space-y-4 items-center overflow-y-auto scroll-smooth">
       <div className="h-3/4 rounded-3xl">
-        {type === "image/jpeg" ? (
+        {mediaType === "image/jpeg" ? (
           <img
             src={dataUrl}
             alt="uploaded media"
@@ -84,8 +68,9 @@ export function PostContent({
         <Button
           size="default"
           className="grow rounded-3xl bg-primaryButton text-primary-foreground"
+          onClick={() => onAddDescription(description)}
         >
-          Post
+          Next
         </Button>
       </div>
     </div>

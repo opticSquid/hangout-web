@@ -1,3 +1,3 @@
-export interface MediaCaptureProps {
+export interface ShootMediaProps {
   onMediaCaptured: (mediaBlob: Blob) => void;
 }

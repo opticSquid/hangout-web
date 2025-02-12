@@ -4,12 +4,10 @@ import { useSessionStore } from "@/lib/hooks/session-provider";
 import { AddCommentRequest } from "@/lib/types/add-comment-request";
 import { SendHorizonal } from "lucide-react";
 import { useState } from "react";
-import { Comment } from "./comment";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
-import { AddCommentResponse } from "@/lib/types/add-comment-response";
 
 export function AddComment({
   postId,
