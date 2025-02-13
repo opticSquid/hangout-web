@@ -2,7 +2,6 @@
 import { AddContentDescription } from "@/components/add-content-description";
 import { ShootMedia } from "@/components/shoot-media";
 import { useSessionStore } from "@/lib/hooks/session-provider";
-import { AddLocationProps } from "@/lib/types/add-location-props";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 
@@ -41,43 +40,64 @@ export default function CreatePost() {
     setStep(1);
   }
   function onAddDescription(description: string) {
-    console.log("add description called");
     setDescription(description);
     proceedToNextStep();
   }
+
   async function onSubmit(
     lat: number,
     lon: number,
     state: string,
     city: string
   ) {
-    const url: string = description
+    const url = description
       ? `${process.env.NEXT_PUBLIC_POST_API_URL}/post/full`
       : `${process.env.NEXT_PUBLIC_POST_API_URL}/post/short`;
+
     const formData = new FormData();
+    const jsonOptions = { type: "application/json" };
+
+    console.log("Original blob type: ", media?.type);
+
     formData.append(
       "file",
-      media!,
+      new Blob([media!], { type: mediaType! }),
       mediaType === "image/jpeg" ? "uploaded-media.jpg" : "uploaded-media.webm"
     );
-    formData.append("lat", lat.toString());
-    formData.append("lon", lon.toString());
-    formData.append("state", state);
-    formData.append("city", city);
+
+    formData.append("lat", new Blob([JSON.stringify(lat)], jsonOptions));
+    formData.append("lon", new Blob([JSON.stringify(lon)], jsonOptions));
+    formData.append("state", new Blob([JSON.stringify(state)], jsonOptions));
+    formData.append("city", new Blob([JSON.stringify(city)], jsonOptions));
+
     if (description) {
-      formData.append("postDescription", description);
+      formData.append(
+        "postDescription",
+        new Blob([JSON.stringify(description)], jsonOptions)
+      );
     }
-    const response: Response = await fetch(url, {
+
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof Blob) {
+        console.log(`FormData entry [${key}]:`, value, "Type:", value.type);
+      } else {
+        console.log(`FormData entry [${key}]:`, value);
+      }
+    }
+
+    const response = await fetch(url, {
       method: "POST",
-      headers: new Headers({
+      headers: {
         Authorization: `Bearer ${accessToken}`,
-      }),
+      },
       body: formData,
     });
+
     if (!response.ok) {
       alert("Posting Failed");
     }
   }
+
   switch (step) {
     case 1: {
       return <ShootMedia onMediaCaptured={onMediaCaptured} />;

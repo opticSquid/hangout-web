@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
 import { LocateFixed } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   MapContainer,
@@ -15,7 +16,6 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { LoadingOverlay } from "./loading-overlay";
 
 // Default marker icon fix for Leaflet in React
 const defaultIcon = new L.Icon({
@@ -26,6 +26,7 @@ const defaultIcon = new L.Icon({
 });
 
 export default function AddLocation(addLocationProps: AddLocationProps) {
+  const router = useRouter();
   const [position, setPosition] = useState<{ lat: number; lng: number }>({
     lat: 0,
     lng: 0,
@@ -83,84 +84,94 @@ export default function AddLocation(addLocationProps: AddLocationProps) {
     setLoading(true);
     await addLocationProps.onSubmit(position.lat, position.lng, state, city);
     setLoading(false);
+    router.push("/");
   }
   return (
-    <LoadingOverlay visible={loading} message="Posting...">
-      <div className="flex flex-col space-y-2 items-center h-full overflow-y-auto scroll-smooth">
-        <MapContainer
-          center={position}
-          zoom={17}
-          className="rounded-b-3xl"
-          style={{ height: "68.75%" }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    <div className="flex flex-col space-y-2 items-center h-full overflow-y-auto scroll-smooth">
+      <MapContainer
+        center={position}
+        zoom={17}
+        className="rounded-b-3xl"
+        style={{ height: "68.75%" }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <RecenterMap position={position} />
+        {/* Recenter when position updates */}
+        <LocationMarker />
+      </MapContainer>
+      <div className="flex flex-row items-end space-x-2 px-2">
+        <div>
+          <Label htmlFor="lat">Latitude</Label>
+          <Input
+            id="lat"
+            type="number"
+            required
+            disabled={loading}
+            value={position.lat}
+            onChange={(e) =>
+              setPosition({ ...position, lat: parseFloat(e.target.value) })
+            }
           />
-          <RecenterMap position={position} />
-          {/* Recenter when position updates */}
-          <LocationMarker />
-        </MapContainer>
-        <div className="flex flex-row items-end space-x-2 px-2">
-          <div>
-            <Label htmlFor="lat">Latitude</Label>
-            <Input
-              id="lat"
-              type="number"
-              value={position.lat}
-              onChange={(e) =>
-                setPosition({ ...position, lat: parseFloat(e.target.value) })
-              }
-            />
-          </div>
-          <div>
-            <Label htmlFor="lng">Longitude</Label>
-            <Input
-              id="lng"
-              type="number"
-              value={position.lng}
-              onChange={(e) =>
-                setPosition({ ...position, lng: parseFloat(e.target.value) })
-              }
-            />
-          </div>
-          <Button
-            variant="outline"
-            size="icon"
-            className=""
-            onClick={() => setLocateMe(true)}
-          >
-            <LocateFixed />
-          </Button>
         </div>
-        <div className="flex flex-row items-end space-x-2 px-2">
-          <div>
-            <Label htmlFor="state">State</Label>
-            <Input
-              id="state"
-              type="text"
-              value={state}
-              onChange={(e) => setState(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="state">City</Label>
-            <Input
-              id="state"
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-            />
-          </div>
+        <div>
+          <Label htmlFor="lng">Longitude</Label>
+          <Input
+            id="lng"
+            type="number"
+            required
+            disabled={loading}
+            value={position.lng}
+            onChange={(e) =>
+              setPosition({ ...position, lng: parseFloat(e.target.value) })
+            }
+          />
         </div>
         <Button
-          className="w-14/15 rounded-3xl bg-primaryButton text-primary-foreground"
-          onClick={doPost}
+          variant="outline"
+          size="icon"
           disabled={loading}
+          onClick={() => setLocateMe(true)}
         >
-          Post
+          <LocateFixed />
         </Button>
       </div>
-    </LoadingOverlay>
+      <div className="flex flex-row items-end space-x-2 px-2">
+        <div>
+          <Label htmlFor="state">State</Label>
+          <Input
+            id="state"
+            type="text"
+            required
+            disabled={loading}
+            value={state}
+            onChange={(e) => setState(e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="state">City</Label>
+          <Input
+            id="state"
+            type="text"
+            required
+            disabled={loading}
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          />
+        </div>
+      </div>
+      <Button
+        className="w-14/15 rounded-3xl bg-primaryButton text-primary-foreground"
+        onClick={doPost}
+        disabled={loading}
+      >
+        Post
+        {loading && (
+          <div className="w-6 h-6 border-4 border-t-4 border-onPrimaryContainer rounded-full animate-spin border-t-primary-foreground"></div>
+        )}
+      </Button>
+    </div>
   );
 }
