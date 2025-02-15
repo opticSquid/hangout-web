@@ -1,3 +1,5 @@
+import { Location } from "./location";
+
 export interface PostOwner {
   name: string;
   photo: string;
@@ -5,4 +7,5 @@ export interface PostOwner {
   state: string;
   city: string;
   distance: number;
+  location: Location;
 }

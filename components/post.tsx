@@ -1,12 +1,13 @@
 "use client";
+import { getTimeDifferenceFromUTC } from "@/lib/time-difference";
 import { PostOwner } from "@/lib/types/post-owner-interface";
 import { PostControls } from "@/lib/types/PostControls";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { PhotoViewer } from "./photo-viewer";
 import { PostInteractions } from "./post-interactions";
 import { PostOwnerInfo } from "./post-owner-info";
 import { Button } from "./ui/button";
-import { getTimeDifferenceFromUTC } from "@/lib/time-difference";
 const ShakaContainer = dynamic(() => import("./shaka-player"), { ssr: false });
 export function Post({ post, canPlayVideo, showDistance }: PostControls) {
   const words: string[] | undefined = post.postDescription?.split(" ");
@@ -24,13 +25,16 @@ export function Post({ post, canPlayVideo, showDistance }: PostControls) {
     state: post.state,
     city: post.city,
     distance: post.distance,
+    location: post.location,
   };
   return (
     <div className="flex flex-col relative">
       <PostOwnerInfo owner={postOwner} showDistance={showDistance} />
       {post.contentType.startsWith("video/") ? (
         <ShakaContainer filename={post.filename} autoPlay={canPlayVideo} />
-      ) : null}
+      ) : (
+        <PhotoViewer filename={post.filename} />
+      )}
 
       {post.postDescription ? (
         <span
