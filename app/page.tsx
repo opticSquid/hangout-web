@@ -236,7 +236,7 @@ export default function PostFeed() {
       if (triggerElement) observer.observe(triggerElement);
       return () => observer.unobserve(triggerElement);
     }
-  }, [postToTriggerDataLoad]);
+  }, [postToTriggerDataLoad, postList]);
 
   return (
     <div className="flex flex-col gap-y-4 snap-mandatory snap-y pb-12">
