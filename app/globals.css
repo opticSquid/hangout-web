@@ -105,3 +105,8 @@ body {
 .shaka-h-full {
   height: 100%;
 }
+
+.leaflet-container {
+  height: 500px;
+  width: 100%;
+}
