@@ -14,8 +14,13 @@ export function DataInitalizer() {
     os: { name: "", version: "" },
     screen: { height: 0.0, width: 0.0 },
   });
-  const { refreshToken, setAccessToken, setRefreshToken, setTrustedSession } =
-    useSessionStore((state) => state);
+  const {
+    accessToken,
+    refreshToken,
+    setAccessToken,
+    setRefreshToken,
+    setTrustedSession,
+  } = useSessionStore((state) => state);
 
   const { addWorker } = useServiceWorkerStore((state) => state);
 
@@ -80,7 +85,7 @@ export function DataInitalizer() {
         ? getCookie(base + "trustedSession") === "true"
         : undefined
     );
-  }, []);
+  }, [accessToken]);
   // This useEffect hook periodically creates renew token request to renew access token
   useEffect(() => {
     function createRenewTokenEvent(registration: ServiceWorkerRegistration) {
