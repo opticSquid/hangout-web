@@ -38,7 +38,7 @@ export function AddContentDescription({
   return (
     <div className="h-full flex flex-col space-y-4 items-center overflow-y-auto scroll-smooth">
       <div className="h-3/4 rounded-3xl">
-        {mediaType === "image/jpeg" ? (
+        {mediaType?.startsWith("image") ? (
           <img
             src={dataUrl}
             alt="uploaded media"

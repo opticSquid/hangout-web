@@ -2,6 +2,7 @@
 import { AddContentDescription } from "@/components/add-content-description";
 import { ShootMedia } from "@/components/shoot-media";
 import { useSessionStore } from "@/lib/hooks/session-provider";
+import { MediaType } from "@/lib/types/accepted-media-type";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 
@@ -16,22 +17,14 @@ export default function CreatePost() {
   const { accessToken } = useSessionStore((state) => state);
   const [step, setStep] = useState<number>(1);
   const [media, setMedia] = useState<Blob | null>(null);
-  const [mediaType, setMediaType] = useState<
-    "image/jpeg" | "video/webm" | null
-  >(null);
+  const [mediaType, setMediaType] = useState<MediaType>(null);
   const [description, setDescription] = useState<string>();
   function proceedToNextStep() {
     setStep((prevState: number) => prevState + 1);
   }
   function onMediaCaptured(mediaBlob: Blob) {
     setMedia(mediaBlob);
-    if (mediaBlob.type === "image/jpeg") {
-      setMediaType("image/jpeg");
-    } else if (mediaBlob.type === "video/webm") {
-      setMediaType("video/webm");
-    } else {
-      setMediaType(null);
-    }
+    setMediaType(mediaBlob.type as MediaType);
     proceedToNextStep();
   }
   function onRetake() {
@@ -103,6 +96,9 @@ export default function CreatePost() {
       return <ShootMedia onMediaCaptured={onMediaCaptured} />;
     }
     case 2: {
+      console.log(
+        `case 2, media size: ${media?.size}, media type: ${mediaType}`
+      );
       if (media && mediaType) {
         return (
           <AddContentDescription
@@ -113,6 +109,7 @@ export default function CreatePost() {
           />
         );
       } else {
+        setStep(1);
         return <ShootMedia onMediaCaptured={onMediaCaptured} />;
       }
     }

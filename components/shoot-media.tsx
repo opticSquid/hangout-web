@@ -4,6 +4,7 @@ import { ShootMediaProps } from "@/lib/types/shoot-media-props";
 import { Circle, CircleStop, FolderOpen, SwitchCamera } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 export function ShootMedia({ onMediaCaptured }: ShootMediaProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -19,7 +20,7 @@ export function ShootMedia({ onMediaCaptured }: ShootMediaProps) {
   const [recording, setRecording] = useState(false);
   const [timer, setTimer] = useState("0:00");
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
-
+  const fileInputRef = useRef<HTMLInputElement>(null);
   /** Start the camera */
   const startCamera = async () => {
     try {
@@ -138,6 +139,56 @@ export function ShootMedia({ onMediaCaptured }: ShootMediaProps) {
     return () => stopCamera();
   }, [facingMode, mode]);
 
+  /** when upload button is clicked activates the input */
+  const handleUploadButtonClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+  /** uploads device files to web */
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const allowedTypes = [
+        "image/png",
+        "image/jpeg",
+        "image/jpg",
+        "image/gif",
+        "image/webp",
+        "video/mp4",
+        "video/mkv",
+        "video/webm",
+        "video/avi",
+        "video/mov",
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        alert("Please select a valid image or video file.");
+        return;
+      }
+
+      if (file.type.startsWith("video")) {
+        const video = document.createElement("video");
+        video.preload = "metadata";
+        video.src = URL.createObjectURL(file);
+        video.onloadedmetadata = () => {
+          window.URL.revokeObjectURL(video.src);
+          if (video.duration > 60) {
+            alert("Video duration should be 1 minute or less.");
+            return;
+          } else {
+            const blob = new Blob([file], { type: file.type });
+            onMediaCaptured(blob);
+            console.log("video file uploaded");
+          }
+        };
+      } else {
+        const blob = new Blob([file], { type: file.type });
+        onMediaCaptured(blob);
+        console.log("image file uploaded");
+      }
+    }
+  };
+
   return (
     <div className="relative w-full h-full flex flex-col items-center">
       {recording && (
@@ -179,25 +230,56 @@ export function ShootMedia({ onMediaCaptured }: ShootMediaProps) {
         </div>
 
         <div className="flex justify-between">
-          <Button variant="ghost" size="icon">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white"
+            onClick={handleUploadButtonClick}
+          >
             <FolderOpen size={36} />
           </Button>
-
+          <Input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*,video/*"
+            style={{ display: "none" }}
+            onChange={handleFileUpload}
+          />
           {mode === "photo" ? (
-            <Button onClick={captureImage} variant="ghost" size="icon">
+            <Button
+              onClick={captureImage}
+              variant="ghost"
+              size="icon"
+              className="text-white"
+            >
               <Circle size={60} />
             </Button>
           ) : recording ? (
-            <Button onClick={stopRecording} variant="ghost" size="icon">
+            <Button
+              onClick={stopRecording}
+              variant="ghost"
+              size="icon"
+              className="text-white"
+            >
               <CircleStop size={60} stroke="red" />
             </Button>
           ) : (
-            <Button onClick={startRecording} variant="ghost" size="icon">
+            <Button
+              onClick={startRecording}
+              variant="ghost"
+              size="icon"
+              className="text-white"
+            >
               <Circle size={60} fill="red" />
             </Button>
           )}
 
-          <Button onClick={switchCamera} variant="ghost" size="icon">
+          <Button
+            onClick={switchCamera}
+            variant="ghost"
+            size="icon"
+            className="text-white"
+          >
             <SwitchCamera size={36} />
           </Button>
         </div>
