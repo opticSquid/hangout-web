@@ -22,7 +22,7 @@ const defaultIcon = new L.Icon({
   iconAnchor: [12, 41],
 });
 
-export function ShowPostLocation({
+export default function ShowPostLocation({
   address,
   location,
 }: {

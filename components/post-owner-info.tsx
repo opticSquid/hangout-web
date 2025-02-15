@@ -1,10 +1,12 @@
 "use client";
 import { PostOwner } from "@/lib/types/post-owner-interface";
 import { Dot } from "lucide-react";
-import { useState } from "react";
-import { ShowPostLocation } from "./post-location-alert";
+import dynamic from "next/dynamic";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-
+const ShowPostLocationContainer = dynamic(
+  () => import("@/components/post-location-alert"),
+  { ssr: false, loading: () => <p>Loading...</p> }
+);
 export function PostOwnerInfo({
   owner,
   showDistance,
@@ -34,7 +36,10 @@ export function PostOwnerInfo({
             {owner.category ? owner.category : "community post"}
           </div>
           <Dot size={16} />
-          <ShowPostLocation address={address} location={owner.location} />
+          <ShowPostLocationContainer
+            address={address}
+            location={owner.location}
+          />
         </div>
       </div>
       <div className="grow" />
