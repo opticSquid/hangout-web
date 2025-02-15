@@ -1,10 +1,10 @@
 "use client";
 import { createContext, ReactNode, useContext, useRef } from "react";
+import { useStore } from "zustand";
 import {
   createServiceWorkerStore,
   ServiceWorkerStore,
 } from "../stores/service-worker-store";
-import { useStore } from "zustand";
 
 type serviceWorkerStoreApi = ReturnType<typeof createServiceWorkerStore>;
 const serviceWorkerContext = createContext<serviceWorkerStoreApi | undefined>(
@@ -16,7 +16,7 @@ interface serviceWorkerStoreProviderProps {
 export const ServiceWorkerStoreProvider = ({
   children,
 }: serviceWorkerStoreProviderProps) => {
-  const storeRef = useRef<serviceWorkerStoreApi>();
+  const storeRef = useRef<serviceWorkerStoreApi>(undefined);
   if (!storeRef.current) {
     storeRef.current = createServiceWorkerStore();
   }

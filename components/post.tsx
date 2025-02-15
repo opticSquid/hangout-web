@@ -8,7 +8,9 @@ import { PhotoViewer } from "./photo-viewer";
 import { PostInteractions } from "./post-interactions";
 import { PostOwnerInfo } from "./post-owner-info";
 import { Button } from "./ui/button";
-const ShakaContainer = dynamic(() => import("./shaka-player"), { ssr: false });
+const ShakaContainer = dynamic(() => import("@/components/shaka-player-new"), {
+  ssr: false,
+});
 export function Post({ post, canPlayVideo, showDistance }: PostControls) {
   const words: string[] | undefined = post.postDescription?.split(" ");
   const [isExpanded, setIsExpanded] = useState(false);
