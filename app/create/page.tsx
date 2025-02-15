@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 
 const AddLocationContainer = dynamic(
-  () => import("@/components/add-location"),
+  () => import("@/components/add-content-location"),
   {
     ssr: false,
     loading: () => <p>Loading...</p>,
