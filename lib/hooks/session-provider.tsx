@@ -18,7 +18,7 @@ interface SessionStoreProviderProps {
 export const SessionStoreProvider = ({
   children,
 }: SessionStoreProviderProps) => {
-  const storeRef = useRef<SessionStoreApi>();
+  const storeRef = useRef<SessionStoreApi>(undefined);
   if (!storeRef.current) {
     storeRef.current = createPersistentSessionStore();
   }
