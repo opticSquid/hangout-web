@@ -32,7 +32,7 @@
     "react-dom": "^19",
     "react-hook-form": "^7.54.2",
     "react-leaflet": "^5.0.0",
-    "shaka-player": "^4.12.8",
+    "shaka-player": "^4.13.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "typescript-cookie": "^1.0.6",
