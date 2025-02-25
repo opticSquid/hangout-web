@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 export function PhotoViewer({ filename }: { filename: string }) {
   const extractedFilename = filename.replace(/\.[^.]+$/, "");
