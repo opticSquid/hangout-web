@@ -1,26 +1,20 @@
 "use client";
-import { useRef, useEffect } from "react";
-import { getCookie } from "typescript-cookie";
+import { useEffect, useRef } from "react";
 import {
   DeviceInfo,
   OS,
   ScreenDimensions,
 } from "../types/device-identifier-interface";
-import { useSessionStore } from "./session-provider";
 import { useServiceWorkerStore } from "./service-worker-provider";
+import { useSessionStore } from "./session-provider";
+import CookiesStorage from "../cookie-storage";
 
 export function DataInitalizer() {
   const deviceInfo = useRef<DeviceInfo>({
     os: { name: "", version: "" },
     screen: { height: 0.0, width: 0.0 },
   });
-  const {
-    accessToken,
-    refreshToken,
-    setAccessToken,
-    setRefreshToken,
-    setTrustedSession,
-  } = useSessionStore((state) => state);
+  const { refreshToken, setAccessToken } = useSessionStore((state) => state);
 
   const { addWorker } = useServiceWorkerStore((state) => state);
 
@@ -75,17 +69,7 @@ export function DataInitalizer() {
       window.removeEventListener("resize", updateDeviceInfo);
     };
   }, []);
-  //this useEffect hook loads data from cookie storage to state
-  useEffect(() => {
-    const base: string = "hangout-session|";
-    setAccessToken(getCookie(base + "accessToken"));
-    setRefreshToken(getCookie(base + "refreshToken"));
-    setTrustedSession(
-      getCookie(base + "trustedSession")
-        ? getCookie(base + "trustedSession") === "true"
-        : undefined
-    );
-  }, [accessToken]);
+
   // This useEffect hook periodically creates renew token request to renew access token
   useEffect(() => {
     function createRenewTokenEvent(registration: ServiceWorkerRegistration) {
@@ -119,6 +103,7 @@ export function DataInitalizer() {
       navigator.serviceWorker.addEventListener("message", (event) => {
         if (event.data.type === "renew-token-response") {
           setAccessToken(event.data.accessToken);
+          CookiesStorage.setItem("accessToken", event.data.accessToken);
         }
       });
     }

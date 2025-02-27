@@ -3,8 +3,10 @@ import { BadgePlus, Compass, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
+import { useSessionStore } from "@/lib/hooks/session-provider";
 export function BottomBar() {
   const router: string = usePathname();
+  const { userId } = useSessionStore((state) => state);
   const activeButtonStyle: string =
     "bg-primaryContainer text-onPrimaryContainer rounded-full";
   const idleButtonStyle: string = "bg-transparent text-primary rounded-full";
@@ -30,11 +32,13 @@ export function BottomBar() {
         </Button>
         <Button
           className={
-            router === "/profile" ? activeButtonStyle : idleButtonStyle
+            router === `/profile/${userId}`
+              ? activeButtonStyle
+              : idleButtonStyle
           }
           size="icon"
         >
-          <Link href="/profile">
+          <Link href={`/profile/${userId}`}>
             <User size={24} />
           </Link>
         </Button>
