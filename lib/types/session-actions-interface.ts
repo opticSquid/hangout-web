@@ -4,5 +4,6 @@ export type SessionAcions = {
   setUserId: (newUserId: number | undefined) => void;
   setTrustedSession: (isTrusted: boolean | undefined) => void;
   isAuthenticated: () => boolean;
+  clearAccessToken: () => void;
   reset: () => void;
 };

@@ -7,13 +7,13 @@ type TokenBody = {
   iat: number;
   exp: number;
 };
-const extractExpiryFromToken = (newToken: string): Date => {
+export const ExtractExpiryFromToken = (newToken: string): Date => {
   const decodedToken: TokenBody = jwtDecode<TokenBody>(newToken);
   // ** required to multiply by 1000 to convert from Unix time to Js Date format
   return new Date(decodedToken.exp * 1000);
 };
 const key = "hangout-session|";
-const CookiesStorage: StateStorage = {
+export const CookiesStorage: StateStorage = {
   getItem: (name: string) => {
     return getCookie(key + name) ?? null;
   },
@@ -27,7 +27,7 @@ const CookiesStorage: StateStorage = {
      */
     if (name.includes("Token") && value != undefined) {
       setCookie(name, value, {
-        expires: extractExpiryFromToken(value),
+        expires: ExtractExpiryFromToken(value),
         sameSite: "strict",
       });
     } else {
@@ -38,5 +38,3 @@ const CookiesStorage: StateStorage = {
     removeCookie(key + name);
   },
 };
-
-export default CookiesStorage;

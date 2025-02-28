@@ -16,9 +16,16 @@ export default async function Profile({
   const profileData: ProfileData = await profileResponse.json();
 
   return (
-    <div>
-      {profileData.name}
-      <PhotoViewer filename={profileData.profilePicture.filename} />
+    <div className="flex flex-col">
+      <div className="flex flex-row">
+        <div className="rounded-full basis-1/3 border border-red-500">
+          <PhotoViewer
+            filename={profileData.profilePicture.filename}
+            rounded={true}
+          />
+        </div>
+        <div className="grow">{profileData.name}</div>
+      </div>
     </div>
   );
 }

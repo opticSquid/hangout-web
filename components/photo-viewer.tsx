@@ -1,6 +1,12 @@
 // "use client";
 
-export function PhotoViewer({ filename }: { filename: string }) {
+export function PhotoViewer({
+  filename,
+  rounded,
+}: {
+  filename: string;
+  rounded: boolean;
+}) {
   const extractedFilename = filename.replace(/\.[^.]+$/, "");
   const baseUrl = `${process.env.NEXT_PUBLIC_MEDIA_SERVER_URL}/${extractedFilename}`;
 
@@ -19,7 +25,7 @@ export function PhotoViewer({ filename }: { filename: string }) {
                        (max-height: 720px) 720px, 
                        1080px"
         alt={filename}
-        className="w-full h-auto"
+        className={rounded ? `w-full h-auto rounded-full` : `w-full h-auto`}
       />
     </div>
   );

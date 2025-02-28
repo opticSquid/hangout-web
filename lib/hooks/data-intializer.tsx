@@ -7,14 +7,16 @@ import {
 } from "../types/device-identifier-interface";
 import { useServiceWorkerStore } from "./service-worker-provider";
 import { useSessionStore } from "./session-provider";
-import CookiesStorage from "../cookie-storage";
+import { CookiesStorage } from "../cookie-storage";
 
 export function DataInitalizer() {
   const deviceInfo = useRef<DeviceInfo>({
     os: { name: "", version: "" },
     screen: { height: 0.0, width: 0.0 },
   });
-  const { refreshToken, setAccessToken } = useSessionStore((state) => state);
+  const { clearAccessToken, refreshToken, setAccessToken } = useSessionStore(
+    (state) => state
+  );
 
   const { addWorker } = useServiceWorkerStore((state) => state);
 
@@ -96,6 +98,7 @@ export function DataInitalizer() {
             createRenewTokenEvent(registration);
             setInterval(() => {
               console.log("firing renew token request event");
+              clearAccessToken();
               createRenewTokenEvent(registration);
             }, 5 * 60 * 1000);
           }

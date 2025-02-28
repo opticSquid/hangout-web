@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import cookieStorage from "../cookie-storage";
 import { SessionAcions } from "../types/session-actions-interface";
 import { SessionState } from "../types/session-store-interface";
 export type SessionStore = SessionState & SessionAcions;
@@ -10,7 +9,6 @@ const UnAuthenticatedSession: SessionState = {
   refreshToken: undefined,
   userId: undefined,
   trustedSesion: undefined,
-  // hydrated: false,
 };
 
 /**
@@ -39,6 +37,9 @@ export const createPersistentSessionStore = (
         },
         isAuthenticated: () => {
           return get().accessToken != undefined;
+        },
+        clearAccessToken: () => {
+          set({ accessToken: undefined });
         },
         reset: () => {
           set(initState);

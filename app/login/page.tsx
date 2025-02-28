@@ -2,6 +2,7 @@
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { LoginForm } from "@/components/login-form";
 import { UntrustedSessionAlert } from "@/components/utrusted-session-alert";
+import { CookiesStorage } from "@/lib/cookie-storage";
 import { useSessionStore } from "@/lib/hooks/session-provider";
 import {
   DeviceInfo,
@@ -9,13 +10,11 @@ import {
   ScreenDimensions,
 } from "@/lib/types/device-identifier-interface";
 import { ErrorResponse } from "@/lib/types/error-response-interface";
-import { Session } from "@/lib/types/login-response-interface";
 import { LoginFormSchema } from "@/lib/types/login-form-schema";
+import { Session } from "@/lib/types/login-response-interface";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { Cookies } from "typescript-cookie";
-import CookiesStorage from "@/lib/cookie-storage";
 
 export default function Login() {
   const [isSubmitted, setIsSubmitted] = useState(false);
