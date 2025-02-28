@@ -25,7 +25,9 @@ export function PhotoViewer({
                        (max-height: 720px) 720px, 
                        1080px"
         alt={filename}
-        className={rounded ? `w-full h-auto rounded-full` : `w-full h-auto`}
+        className={
+          rounded ? `w-32 h-32 rounded-full object-cover` : `w-full h-auto`
+        }
       />
     </div>
   );

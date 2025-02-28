@@ -35,7 +35,7 @@ export function Post({ post, canPlayVideo, showDistance }: PostControls) {
       {post.contentType.startsWith("video/") ? (
         <ShakaContainer filename={post.filename} autoPlay={canPlayVideo} />
       ) : (
-        <PhotoViewer filename={post.filename} />
+        <PhotoViewer filename={post.filename} rounded={false} />
       )}
 
       {post.postDescription ? (
