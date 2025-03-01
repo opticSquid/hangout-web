@@ -1,4 +1,5 @@
 import { PhotoViewer } from "@/components/photo-viewer";
+import { PostGrid } from "@/components/post-grid";
 import { Button } from "@/components/ui/button";
 import { ProfileResponse as ProfileData } from "@/lib/types/get-profile-response";
 import { Grid3X3 } from "lucide-react";
@@ -36,6 +37,7 @@ export default async function Profile({
           &nbsp;POSTS
         </Button>
       </div>
+      <PostGrid />
     </div>
   );
 }
