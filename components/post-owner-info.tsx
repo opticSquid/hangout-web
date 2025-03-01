@@ -3,6 +3,7 @@ import { PostOwner } from "@/lib/types/post-owner-interface";
 import { Dot } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { PhotoViewer } from "./photo-viewer";
 const ShowPostLocationContainer = dynamic(
   () => import("@/components/post-location-alert"),
   { ssr: false, loading: () => <p>Loading...</p> }
@@ -24,10 +25,7 @@ export function PostOwnerInfo({
   return (
     <div className="flex flex-row ml-1">
       <div className="basis-10 flex items-center">
-        <Avatar>
-          <AvatarImage src={owner.photo} alt="@shadcn" />
-          <AvatarFallback delayMs={500}>CN</AvatarFallback>
-        </Avatar>
+        <PhotoViewer filename={owner.photo} rounded={true} radius="small" />
       </div>
       <div className="ml-1 flex flex-col gap-0">
         <div className="font-semibold mb-0">{owner.name}</div>

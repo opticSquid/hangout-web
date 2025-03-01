@@ -16,8 +16,8 @@ import {
 
 // Default marker icon fix for Leaflet in React
 const defaultIcon = new L.Icon({
-  iconUrl: "marker-icon.png",
-  shadowUrl: "marker-shadow.png",
+  iconUrl: "/marker-icon.png",
+  shadowUrl: "/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });

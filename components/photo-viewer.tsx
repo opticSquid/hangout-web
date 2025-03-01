@@ -3,9 +3,11 @@
 export function PhotoViewer({
   filename,
   rounded,
+  radius,
 }: {
   filename: string;
   rounded: boolean;
+  radius: "small" | "medium";
 }) {
   const extractedFilename = filename.replace(/\.[^.]+$/, "");
   const baseUrl = `${process.env.NEXT_PUBLIC_MEDIA_SERVER_URL}/${extractedFilename}`;
@@ -26,7 +28,11 @@ export function PhotoViewer({
                        1080px"
         alt={filename}
         className={
-          rounded ? `w-32 h-32 rounded-full object-cover` : `w-full h-auto`
+          rounded
+            ? radius === "small"
+              ? "w-10 h-10 rounded-full object-center"
+              : "w-32 h-32 rounded-full object-center"
+            : "w-full h-auto"
         }
       />
     </div>
