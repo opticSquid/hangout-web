@@ -7,7 +7,7 @@ export function PhotoViewer({
 }: {
   filename: string;
   rounded: boolean;
-  radius: "small" | "medium";
+  radius: "small" | "medium" | undefined;
 }) {
   const extractedFilename = filename.replace(/\.[^.]+$/, "");
   const baseUrl = `${process.env.NEXT_PUBLIC_MEDIA_SERVER_URL}/${extractedFilename}`;

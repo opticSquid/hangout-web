@@ -25,7 +25,7 @@ export default async function Profile({
           <PhotoViewer
             filename={profileData.profilePicture.filename}
             rounded={true}
-            radius={32}
+            radius="medium"
           />
         </div>
         <div className="grow text-lg font-medium tracking-wide">
