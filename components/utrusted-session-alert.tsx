@@ -1,10 +1,12 @@
 "use client";
+import { CookiesStorage } from "@/lib/cookie-storage";
 import { useSessionStore } from "@/lib/hooks/session-provider";
 import {
   DeviceInfo,
   OS,
   ScreenDimensions,
 } from "@/lib/types/device-identifier-interface";
+import { ErrorResponse } from "@/lib/types/error-response-interface";
 import { Session } from "@/lib/types/login-response-interface";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useRouter } from "next/navigation";
@@ -103,7 +105,14 @@ export function UntrustedSessionAlert({ open }: openDialog) {
         setAccessToken(session.accessToken);
         setRefreshToken(session.refreshToken);
         setTrustedSession(true);
+        CookiesStorage.setItem("accessToken", session.accessToken);
+        CookiesStorage.setItem("refreshToken", session.refreshToken);
         router.push("/");
+      } else if (response.status >= 400 && response.status < 500) {
+        alert("could not trust device");
+      } else {
+        const error: ErrorResponse = await response.json();
+        console.error("could not login user. Internal Server Error", error);
       }
     } catch (error: unknown) {
       console.error(

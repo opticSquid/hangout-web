@@ -2,6 +2,7 @@
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { LoginForm } from "@/components/login-form";
 import { UntrustedSessionAlert } from "@/components/utrusted-session-alert";
+import { CookiesStorage } from "@/lib/cookie-storage";
 import { useSessionStore } from "@/lib/hooks/session-provider";
 import {
   DeviceInfo,
@@ -9,8 +10,8 @@ import {
   ScreenDimensions,
 } from "@/lib/types/device-identifier-interface";
 import { ErrorResponse } from "@/lib/types/error-response-interface";
-import { Session } from "@/lib/types/login-response-interface";
 import { LoginFormSchema } from "@/lib/types/login-form-schema";
+import { Session } from "@/lib/types/login-response-interface";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -24,7 +25,7 @@ export default function Login() {
   const [openUntrustedSessionAlert, setOpenUntrustedSessionAlert] =
     useState(false);
   const router = useRouter();
-  const { setAccessToken, setRefreshToken, setTrustedSession } =
+  const { setAccessToken, setRefreshToken, setUserId, setTrustedSession } =
     useSessionStore((state) => state);
   useEffect(() => {
     const userAgent = window.navigator.userAgent;
@@ -98,17 +99,26 @@ export default function Login() {
         const session: Session = await response.json();
         setAccessToken(session.accessToken);
         setRefreshToken(session.refreshToken);
+        setUserId(session.userId);
         setTrustedSession(true);
+        CookiesStorage.setItem("accessToken", session.accessToken);
+        CookiesStorage.setItem("refreshToken", session.refreshToken);
         router.push("/");
       } else if (response.status === 307) {
         const session: Session = await response.json();
+        console.log("setting access token from login");
         setAccessToken(session.accessToken);
         setRefreshToken(session.refreshToken);
+        setUserId(session.userId);
         setTrustedSession(false);
+        CookiesStorage.setItem("accessToken", session.accessToken);
+        CookiesStorage.setItem("refreshToken", session.refreshToken);
         setOpenUntrustedSessionAlert(true);
+      } else if (response.status >= 400 && response.status < 500) {
+        alert("could not login user. Username/Password wrong");
       } else {
         const error: ErrorResponse = await response.json();
-        console.error("could not login user", error);
+        console.error("could not login user. Internal Server Error", error);
       }
     } catch (error: unknown) {
       console.error(

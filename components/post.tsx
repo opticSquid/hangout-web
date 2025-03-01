@@ -3,11 +3,12 @@ import { getTimeDifferenceFromUTC } from "@/lib/time-difference";
 import { PostOwner } from "@/lib/types/post-owner-interface";
 import { PostControls } from "@/lib/types/PostControls";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PhotoViewer } from "./photo-viewer";
 import { PostInteractions } from "./post-interactions";
 import { PostOwnerInfo } from "./post-owner-info";
 import { Button } from "./ui/button";
+import { ProfileData } from "@/lib/types/get-profile-response";
 const ShakaContainer = dynamic(() => import("@/components/shaka-player-new"), {
   ssr: false,
 });
@@ -21,21 +22,39 @@ export function Post({ post, canPlayVideo, showDistance }: PostControls) {
   const toggleText = (): void => {
     setIsExpanded(!isExpanded);
   };
-  const postOwner: PostOwner = {
-    name: "Soumalya Bhattacharya",
-    photo: "https://github.com/shadcn.png",
+  const [postOwner, setPostOwner] = useState<PostOwner>({
+    name: "",
+    photo: "",
     state: post.state,
     city: post.city,
     distance: post.distance,
     location: post.location,
-  };
+  });
+  useEffect(() => {
+    async function fetchProfile() {
+      const profileResponse: Response = await fetch(
+        `${process.env.NEXT_PUBLIC_PROFILE_API_URL}/profile/${post.ownerId}`
+      );
+      const profileData: ProfileData = await profileResponse.json();
+      setPostOwner({
+        ...postOwner,
+        name: profileData.name,
+        photo: profileData.profilePicture.filename,
+      });
+    }
+    fetchProfile();
+  }, []);
   return (
     <div className="flex flex-col relative">
       <PostOwnerInfo owner={postOwner} showDistance={showDistance} />
       {post.contentType.startsWith("video/") ? (
         <ShakaContainer filename={post.filename} autoPlay={canPlayVideo} />
       ) : (
-        <PhotoViewer filename={post.filename} />
+        <PhotoViewer
+          filename={post.filename}
+          rounded={false}
+          radius={undefined}
+        />
       )}
 
       {post.postDescription ? (

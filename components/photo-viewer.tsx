@@ -1,6 +1,14 @@
-"use client";
+// "use client";
 
-export function PhotoViewer({ filename }: { filename: string }) {
+export function PhotoViewer({
+  filename,
+  rounded,
+  radius,
+}: {
+  filename: string;
+  rounded: boolean;
+  radius: "small" | "medium" | undefined;
+}) {
   const extractedFilename = filename.replace(/\.[^.]+$/, "");
   const baseUrl = `${process.env.NEXT_PUBLIC_MEDIA_SERVER_URL}/${extractedFilename}`;
 
@@ -19,7 +27,13 @@ export function PhotoViewer({ filename }: { filename: string }) {
                        (max-height: 720px) 720px, 
                        1080px"
         alt={filename}
-        className="w-full h-auto"
+        className={
+          rounded
+            ? radius === "small"
+              ? "w-10 h-10 rounded-full object-center"
+              : "w-32 h-32 rounded-full object-center"
+            : "w-full h-auto"
+        }
       />
     </div>
   );
