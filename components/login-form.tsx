@@ -19,11 +19,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-interface login {
+interface Login {
   isSubmitted: boolean;
   onSubmit(values: z.infer<typeof LoginFormSchema>): void;
 }
-export function LoginForm({ isSubmitted, onSubmit }: login) {
+export function LoginForm({ isSubmitted, onSubmit }: Login) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const form = useForm<z.infer<typeof LoginFormSchema>>({
     resolver: zodResolver(LoginFormSchema),
