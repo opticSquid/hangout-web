@@ -25,6 +25,7 @@ export default function CreateProfile() {
         headers: new Headers({
           Authorization: `Bearer ${accessToken}`,
         }),
+        body: formData,
       }
     );
     if (response.status == 200) {
