@@ -8,18 +8,23 @@ import {
 import { useServiceWorkerStore } from "./service-worker-provider";
 import { useSessionStore } from "./session-provider";
 import { CookiesStorage } from "../cookie-storage";
+import { useRouter } from "next/navigation";
 
 export function DataInitalizer() {
   const deviceInfo = useRef<DeviceInfo>({
     os: { name: "", version: "" },
     screen: { height: 0.0, width: 0.0 },
   });
-  const { clearAccessToken, refreshToken, setAccessToken } = useSessionStore(
-    (state) => state
-  );
+  const {
+    clearAccessToken,
+    refreshToken,
+    setAccessToken,
+    accessToken,
+    userId,
+  } = useSessionStore((state) => state);
 
   const { addWorker } = useServiceWorkerStore((state) => state);
-
+  const router = useRouter();
   // this useEffect hook collects device info and sets the headers
   useEffect(() => {
     const userAgent = window.navigator.userAgent;
@@ -111,6 +116,27 @@ export function DataInitalizer() {
       });
     }
   }, [refreshToken]);
+
+  // This useEffect checks if the profile of the logged in user exist, otherwise sends them to create profile page
+  useEffect(() => {
+    async function checkProfileExistence() {
+      const profileResponse: Response = await fetch(
+        `${process.env.NEXT_PUBLIC_PROFILE_API_URL}/profile`,
+        {
+          method: "GET",
+          headers: new Headers({
+            Authorization: `Bearer ${accessToken}`,
+          }),
+        }
+      );
+      if (profileResponse.status === 404) {
+        router.replace(`/profile/${userId}/create`);
+      }
+    }
+    if (accessToken) {
+      checkProfileExistence();
+    }
+  }, [accessToken]);
 
   //* Needed if we use VideoJs video player
   //setting this property for video-js to make it not choose any dimension
