@@ -21,26 +21,6 @@ export function ShootMedia({ onMediaCaptured }: ShootMediaProps) {
   const [timer, setTimer] = useState("0:00");
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  /** Start the camera */
-  const startCamera = async () => {
-    try {
-      // Stop any existing stream before starting a new one
-      stopCamera();
-
-      const newStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode },
-        audio: mode === "video", // Enable audio only for video mode
-      });
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = newStream;
-      }
-
-      stream.current = newStream;
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-    }
-  };
 
   /** Stop the camera */
   const stopCamera = () => {
@@ -135,6 +115,26 @@ export function ShootMedia({ onMediaCaptured }: ShootMediaProps) {
 
   /** Restart camera on mode change */
   useEffect(() => {
+    /** Start the camera */
+    const startCamera = async () => {
+      try {
+        // Stop any existing stream before starting a new one
+        stopCamera();
+
+        const newStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode },
+          audio: mode === "video", // Enable audio only for video mode
+        });
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = newStream;
+        }
+
+        stream.current = newStream;
+      } catch (error) {
+        console.error("Error accessing camera:", error);
+      }
+    };
     startCamera();
     return () => stopCamera();
   }, [facingMode, mode]);

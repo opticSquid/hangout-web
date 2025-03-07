@@ -115,7 +115,7 @@ export function DataInitalizer() {
         }
       });
     }
-  }, [refreshToken]);
+  }, [refreshToken, addWorker, clearAccessToken, setAccessToken]);
 
   // This useEffect checks if the profile of the logged in user exist, otherwise sends them to create profile page
   useEffect(() => {
@@ -136,7 +136,7 @@ export function DataInitalizer() {
     if (accessToken) {
       checkProfileExistence();
     }
-  }, [accessToken]);
+  }, [accessToken, router, userId]);
 
   //* Needed if we use VideoJs video player
   //setting this property for video-js to make it not choose any dimension

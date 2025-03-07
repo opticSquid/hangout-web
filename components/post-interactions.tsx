@@ -16,12 +16,6 @@ export function PostInteractions(postInteraction: PostInteraction) {
   const idleButtonStyle: string = "bg-transparent text-primary rounded-full";
   const [isHearted, setIsHearted] = useState(false);
   const [heartCount, setHeartCount] = useState(postInteraction.heartCount);
-  const [commentCount, setCommentCount] = useState(
-    postInteraction.commentCount
-  );
-  const [interactionCount, setInteractionCount] = useState(
-    postInteraction.interactionCount
-  );
   useEffect(() => {
     async function fetchData() {
       if (accessToken) {
@@ -39,7 +33,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
       }
     }
     fetchData();
-  }, []);
+  }, [accessToken, postInteraction.postId]);
   const toggleIsLoved = async (): Promise<void> => {
     if (isHearted === false) {
       fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/heart`, {
@@ -89,7 +83,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
           </Link>
         </Button>
       )}
-      <div>{commentCount}</div>
+      <div>{postInteraction.commentCount}</div>
       <div className="grow" />
       <Button variant="ghost" size="icon">
         <Share2 />

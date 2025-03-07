@@ -121,48 +121,6 @@ export default function PostFeed() {
   };
 
   /**
-   * Handles the initial data load or radius-based retries.
-   */
-  const loadInitialData = async () => {
-    if (!triggerDataLoad || !location) {
-      setTriggerDataLoad(false);
-      return;
-    }
-    console.log(`trigger data load has been set to true. loading data. 
-      time: ${new Date().toISOString()}`);
-    if (!pagePointer.current.totalPages) {
-      console.log(
-        `total pages is undefined triggering initial data load. time: ${new Date().toISOString()}`
-      );
-      pagePointer.current.currentPage += 1;
-      await attemptFetchWithRadiusIncrease(5);
-    } else if (
-      pagePointer.current.currentPage < pagePointer.current.totalPages
-    ) {
-      console.log(
-        `triggering data load of next page with same search radius. time: ${new Date().toISOString()}`
-      );
-      pagePointer.current.currentPage += 1;
-      const success = await fetchAndAppendPosts();
-      if (!success) pagePointer.current.currentPage -= 1;
-    } else {
-      console.log(
-        `current Page ${pagePointer.current.currentPage} >= total Pages ${
-          pagePointer.current.totalPages
-        }. Resetting page pointer and searching for larger search radius. time: ${new Date().toISOString()}`
-      );
-      resetPagePointer();
-      // initially increasing the search radius here so that the first request attempt only goes for larger search radius
-      searchRadius.current = {
-        min: searchRadius.current.max,
-        max: searchRadius.current.max + 1000,
-      };
-      await attemptFetchWithRadiusIncrease(5);
-    }
-
-    setTriggerDataLoad(false);
-  };
-  /**
    * When service worker registers fetches the location and triggers intial data load by setting triggerDataLoad to true
    */
   useEffect(() => {
@@ -188,6 +146,48 @@ export default function PostFeed() {
    * When trigger data load is true triggers additionaln data load
    */
   useEffect(() => {
+    /**
+     * Handles the initial data load or radius-based retries.
+     */
+    const loadInitialData = async () => {
+      if (!triggerDataLoad || !location) {
+        setTriggerDataLoad(false);
+        return;
+      }
+      console.log(`trigger data load has been set to true. loading data. 
+      time: ${new Date().toISOString()}`);
+      if (!pagePointer.current.totalPages) {
+        console.log(
+          `total pages is undefined triggering initial data load. time: ${new Date().toISOString()}`
+        );
+        pagePointer.current.currentPage += 1;
+        await attemptFetchWithRadiusIncrease(5);
+      } else if (
+        pagePointer.current.currentPage < pagePointer.current.totalPages
+      ) {
+        console.log(
+          `triggering data load of next page with same search radius. time: ${new Date().toISOString()}`
+        );
+        pagePointer.current.currentPage += 1;
+        const success = await fetchAndAppendPosts();
+        if (!success) pagePointer.current.currentPage -= 1;
+      } else {
+        console.log(
+          `current Page ${pagePointer.current.currentPage} >= total Pages ${
+            pagePointer.current.totalPages
+          }. Resetting page pointer and searching for larger search radius. time: ${new Date().toISOString()}`
+        );
+        resetPagePointer();
+        // initially increasing the search radius here so that the first request attempt only goes for larger search radius
+        searchRadius.current = {
+          min: searchRadius.current.max,
+          max: searchRadius.current.max + 1000,
+        };
+        await attemptFetchWithRadiusIncrease(5);
+      }
+
+      setTriggerDataLoad(false);
+    };
     loadInitialData();
   }, [triggerDataLoad]);
 

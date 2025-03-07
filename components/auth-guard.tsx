@@ -6,7 +6,8 @@ import { ReactNode, useEffect, useState } from "react";
 export function AuthGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { isAuthenticated } = useSessionStore((state) => state);
-  const [isAllowed, setIsAllowed] = useState<Boolean>(false);
+  const [isAllowed, setIsAllowed] = useState<boolean>(false);
+  const authenticationStatus = isAuthenticated();
   useEffect(() => {
     console.log("is authenticated: ", isAuthenticated());
     if (!isAuthenticated()) {
@@ -15,7 +16,7 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     } else {
       setIsAllowed(true);
     }
-  }, [isAuthenticated(), router]);
+  }, [isAuthenticated, authenticationStatus, router]);
   if (!isAllowed) {
     return null;
   } else {
