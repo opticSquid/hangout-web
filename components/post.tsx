@@ -16,7 +16,8 @@ export function Post({ post, canPlayVideo, showDistance }: PostControls) {
   const words: string[] | undefined = post.postDescription?.split(" ");
   const [isExpanded, setIsExpanded] = useState(false);
   let previewText: string | undefined = words?.slice(0, 10).join(" ");
-  if (words && words?.length > 10) {
+  const wordLimit = 10;
+  if (words && words?.length > wordLimit) {
     previewText += "...";
   }
   const toggleText = (): void => {
@@ -66,11 +67,13 @@ export function Post({ post, canPlayVideo, showDistance }: PostControls) {
           }`}
         >
           {isExpanded ? post?.postDescription : previewText}
-          <Button variant="link" onClick={toggleText}>
-            <span className="font-bold">
-              {isExpanded ? "collapse" : "read more"}
-            </span>
-          </Button>
+          {words && words?.length > wordLimit && (
+            <Button variant="link" onClick={toggleText}>
+              <span className="font-bold">
+                {isExpanded ? "collapse" : "read more"}
+              </span>
+            </Button>
+          )}
         </span>
       ) : null}
       <div className="text-xs text-neutral-500 pl-2 font-semibold">
