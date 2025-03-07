@@ -28,34 +28,28 @@ export function AddComment({
         postId: postId,
         comment: comment,
       };
-      const response: Response = await fetch(
-        `${process.env.NEXT_PUBLIC_POST_API_URL}/comment`,
-        {
-          method: "POST",
-          headers: new Headers({
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          }),
-          body: JSON.stringify(newComment),
-        }
-      );
+      await fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/comment`, {
+        method: "POST",
+        headers: new Headers({
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify(newComment),
+      });
     } else {
       const newReply: AddCommentRequest = {
         postId: postId,
         parentCommentId: parentCommentId,
         comment: comment,
       };
-      const response: Response = await fetch(
-        `${process.env.NEXT_PUBLIC_POST_API_URL}/comment/reply`,
-        {
-          method: "POST",
-          headers: new Headers({
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          }),
-          body: JSON.stringify(newReply),
-        }
-      );
+      await fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/comment/reply`, {
+        method: "POST",
+        headers: new Headers({
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify(newReply),
+      });
     }
     setLoading(false);
     // revalidate the cached comments

@@ -35,7 +35,7 @@ export default function ShakaPlayer({ filename, autoPlay }: VideoPlayerProps) {
     return () => {
       player.destroy().catch(console.error);
     };
-  }, [filename]);
+  }, [extractedFilename]);
 
   useEffect(() => {
     if (autoPlay) {

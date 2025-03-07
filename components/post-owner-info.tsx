@@ -2,7 +2,6 @@
 import { PostOwner } from "@/lib/types/post-owner-interface";
 import { Dot } from "lucide-react";
 import dynamic from "next/dynamic";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { PhotoViewer } from "./photo-viewer";
 const ShowPostLocationContainer = dynamic(
   () => import("@/components/post-location-alert"),

@@ -36,14 +36,16 @@ export function Post({ post, canPlayVideo, showDistance }: PostControls) {
         `${process.env.NEXT_PUBLIC_PROFILE_API_URL}/profile/${post.ownerId}`
       );
       const profileData: ProfileData = await profileResponse.json();
-      setPostOwner({
-        ...postOwner,
-        name: profileData.name,
-        photo: profileData.profilePicture.filename,
+      setPostOwner((p) => {
+        return {
+          ...p,
+          name: profileData.name,
+          photo: profileData.profilePicture.filename,
+        };
       });
     }
     fetchProfile();
-  }, []);
+  }, [post.ownerId]);
   return (
     <div className="flex flex-col relative">
       <PostOwnerInfo owner={postOwner} showDistance={showDistance} />
