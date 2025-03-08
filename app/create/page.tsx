@@ -54,14 +54,14 @@ export default function CreatePost() {
 
     formData.append(
       "file",
-      new Blob([media!], { type: mediaType! }),
+      media!,
       mediaType === "image/jpeg" ? "uploaded-media.jpg" : "uploaded-media.webm"
     );
 
-    formData.append("lat", new Blob([JSON.stringify(lat)], jsonOptions));
-    formData.append("lon", new Blob([JSON.stringify(lon)], jsonOptions));
-    formData.append("state", new Blob([JSON.stringify(state)], jsonOptions));
-    formData.append("city", new Blob([JSON.stringify(city)], jsonOptions));
+    formData.append("lat", lat.toString());
+    formData.append("lon", lon.toString());
+    formData.append("state", state);
+    formData.append("city", city);
 
     if (description) {
       formData.append(
