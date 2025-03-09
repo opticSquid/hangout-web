@@ -1,19 +1,25 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef } from "react";
 import { ApiResponse } from "../types/ApiResponse";
 import { FetchPostsRequest } from "../types/fetch-posts-request";
 import { FetchPostsResponse } from "../types/get-posts-response";
-import { SearchRadius } from "../types/search-radius";
 import { PagePointer } from "../types/page-pointer";
+import { SearchRadius } from "../types/search-radius";
 
 export default function useFeedUtils() {
-  const searchRadius = useRef<SearchRadius>({
-    min: 0,
-    max: 1000,
-  });
-  const [pagePointer, setPagePointer] = useState<PagePointer>({
-    currentPage: 1,
-    totalPages: undefined,
-  });
+  const searchRadius = useRef<SearchRadius>({ min: 0, max: 1000 });
+  const pagePointer = useRef<PagePointer>({ currentPage: 1, totalPages: 0 });
+
+  const increaseSearchRadius = () => {
+    searchRadius.current = {
+      min: searchRadius.current.max,
+      max: searchRadius.current.max + 1000,
+    };
+  };
+
+  const resetPagePointer = () => {
+    pagePointer.current = { currentPage: 1, totalPages: 0 };
+  };
+
   const fetchPosts = useCallback(
     async (
       location: GeolocationPosition
@@ -23,47 +29,48 @@ export default function useFeedUtils() {
         lon: location.coords.longitude,
         minSearchRadius: searchRadius.current.min,
         maxSearchRadius: searchRadius.current.max,
-        pageNumber: pagePointer.currentPage,
+        pageNumber: pagePointer.current.currentPage,
       };
-      const response: Response = await fetch(
+
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_POST_API_URL}/post/near-me`,
         {
           method: "POST",
-          headers: new Headers({
-            "Content-Type": "application/json",
-          }),
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(rqBody),
         }
       );
+
       if (!response.ok) {
         return {
-          error: { message: "could not fetch posts", status: response.status },
+          error: { message: "Could not fetch posts", status: response.status },
         };
       }
+
       const posts: FetchPostsResponse = await response.json();
-      if (pagePointer.currentPage === pagePointer.totalPages) {
-        searchRadius.current = {
-          min: searchRadius.current.max,
-          max: searchRadius.current.max + 1000,
-        };
-        setPagePointer({ currentPage: 1, totalPages: undefined });
-      } else {
-        setPagePointer((prevState) => {
-          return {
-            ...prevState,
-            currentPage: prevState.currentPage + 1,
-            totalPages:
-              prevState.currentPage === 1
-                ? posts.totalPages
-                : prevState.totalPages,
+
+      if (posts.totalPages !== undefined) {
+        if (posts.totalPages <= 1) {
+          increaseSearchRadius();
+        } else {
+          pagePointer.current = {
+            currentPage: pagePointer.current.currentPage + 1,
+            totalPages: posts.totalPages,
           };
-        });
+        }
+      } else if (
+        pagePointer.current.currentPage === pagePointer.current.totalPages
+      ) {
+        increaseSearchRadius();
+        resetPagePointer();
+      } else {
+        pagePointer.current.currentPage++;
       }
+
       return { data: posts };
     },
     []
   );
-  return {
-    fetchPosts,
-  };
+
+  return { fetchPosts };
 }

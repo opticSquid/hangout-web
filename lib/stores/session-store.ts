@@ -47,14 +47,6 @@ export const createPersistentSessionStore = (
       })),
       {
         name: "hangout-session",
-        onRehydrateStorage(state) {
-          console.log("current state before rehydration: ", state);
-          return (state, error) => {
-            error
-              ? console.error("Error during state rehydration: ", error)
-              : console.log("rehydrated state: ", state);
-          };
-        },
         merge: (persistedState: unknown, currentState) => {
           const prevState = persistedState as SessionState;
           console.log("Persisted State: ", persistedState);
