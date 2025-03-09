@@ -1,6 +1,6 @@
 import { NearbyPostInterface } from "./nearby-post-interface";
 
-export interface GetPostResponse {
+export interface FetchPostsResponse {
   posts: NearbyPostInterface[];
   totalPages?: number;
 }

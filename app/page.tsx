@@ -1,9 +1,9 @@
 "use client";
 import { Post } from "@/components/post";
 import { useServiceWorkerStore } from "@/lib/hooks/service-worker-provider";
-import { GetPostResponse } from "@/lib/types/get-posts-response";
-import { PagePointer } from "@/lib/types/page-pointer";
+import { FetchPostsResponse } from "@/lib/types/get-posts-response";
 import { NearbyPostInterface } from "@/lib/types/nearby-post-interface";
+import { PagePointer } from "@/lib/types/page-pointer";
 import { SearchRadius } from "@/lib/types/search-radius";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -70,7 +70,7 @@ export default function PostFeed() {
               handleMessage
             );
 
-            const response = event.data.response as GetPostResponse | null;
+            const response = event.data.response as FetchPostsResponse | null;
 
             if (response && response.posts.length > 0) {
               appendPostList(response.posts);
