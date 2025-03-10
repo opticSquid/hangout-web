@@ -78,8 +78,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(leaflet@1.9.4)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       shaka-player:
-        specifier: ^4.12.8
-        version: 4.12.8
+        specifier: ^4.13.8
+        version: 4.13.8
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.0
@@ -1206,8 +1206,8 @@ packages:
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
-  eme-encryption-scheme-polyfill@2.2.0:
-    resolution: {integrity: sha512-wfgRcR2cGAX0WKbPahhI13dr2mzFQ/rMnoDibRIdScQlv9S0rtnXd25XF17IUdNJw/voJoFpYQp33C3xkFnyEw==}
+  eme-encryption-scheme-polyfill@2.2.1:
+    resolution: {integrity: sha512-GzgrLuZPYGijd8oaKuBqYv3Tc2oruDZM3V2982KOuy/PA1N3zwMe+/oIXJYfZ3BH3PwW5nONdBBE+VY6jlwbrw==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -2133,8 +2133,9 @@ packages:
     resolution: {integrity: sha512-7PGFlmtwsEADb0WYyvCMa1t+yke6daIG4Wirafur5kcf+MhUnPms1UeR0CKQdTZD81yESwMHbtn+TR+dMviakQ==}
     engines: {node: '>= 0.4'}
 
-  shaka-player@4.12.8:
-    resolution: {integrity: sha512-PXOgHLVgYJaA0KSpPhPZHiIwPYIwKyTF0HqFYdau7PE2zbSEXY6PZMSrS307MVnJ7qXABeo8pU1aQk3DuFwTkA==}
+  shaka-player@4.13.8:
+    resolution: {integrity: sha512-1dMfiL0c3k/nLBCeJ/zsCmwr8Km5BCA9n/ZI7FlbZTpi0UqcKOxdNFcN0GeapaumGcqOx89Vzf+bbUJDCM+Yag==}
+    engines: {node: '>=18'}
 
   sharp@0.33.5:
     resolution: {integrity: sha512-haPVm1EkS9pgvHrQ/F3Xy+hgcuMV0Wm9vfIBSiwZ05k+xgb0PkBQpGsAA/oWdDobNaZTH5ppvHtzCFbnSEwHVw==}
@@ -3521,7 +3522,7 @@ snapshots:
 
   eastasianwidth@0.2.0: {}
 
-  eme-encryption-scheme-polyfill@2.2.0: {}
+  eme-encryption-scheme-polyfill@2.2.1: {}
 
   emoji-regex@8.0.0: {}
 
@@ -4609,9 +4610,9 @@ snapshots:
       functions-have-names: 1.2.3
       has-property-descriptors: 1.0.2
 
-  shaka-player@4.12.8:
+  shaka-player@4.13.8:
     dependencies:
-      eme-encryption-scheme-polyfill: 2.2.0
+      eme-encryption-scheme-polyfill: 2.2.1
 
   sharp@0.33.5:
     dependencies:
