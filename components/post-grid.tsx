@@ -1,12 +1,13 @@
 "use client";
 
-import { useSessionStore } from "@/lib/hooks/session-provider";
+import useStore from "@/lib/hooks/use-store";
+import { useNewSessionStore } from "@/lib/stores/session-store";
 import { ParticularPostInterface } from "@/lib/types/particular-post-interface";
 import { useEffect, useState } from "react";
 import { Post } from "./post";
 
 export function PostGrid() {
-  const { accessToken } = useSessionStore((state) => state);
+  const store = useStore(useNewSessionStore, (state) => state);
   const [postList, setPostList] = useState<
     ParticularPostInterface[] | undefined
   >(undefined);
@@ -17,7 +18,7 @@ export function PostGrid() {
         {
           method: "GET",
           headers: new Headers({
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${store?.accessToken}`,
           }),
         }
       );
@@ -27,7 +28,7 @@ export function PostGrid() {
       }
     }
     fetchPosts();
-  }, [accessToken]);
+  }, [store?.accessToken]);
   return postList?.map((post) => (
     <Post
       post={post}

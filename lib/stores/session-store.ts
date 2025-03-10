@@ -3,8 +3,10 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { SessionAcions } from "../types/session-actions-interface";
 import { SessionState } from "../types/session-store-interface";
+
 export type SessionStore = SessionState & SessionAcions;
-const UnAuthenticatedSession: SessionState = {
+
+const unAuthenticatedSession: SessionState = {
   accessToken: undefined,
   refreshToken: undefined,
   userId: undefined,
@@ -17,7 +19,7 @@ const UnAuthenticatedSession: SessionState = {
  * @returns Store of the State
  */
 export const createPersistentSessionStore = (
-  initState: SessionState = UnAuthenticatedSession
+  initState: SessionState = unAuthenticatedSession
 ) =>
   create<SessionStore>()(
     persist(
@@ -59,3 +61,37 @@ export const createPersistentSessionStore = (
       }
     )
   );
+
+// the store itself does not need any change
+export const useNewSessionStore = create(
+  persist<SessionStore>(
+    (set, get) => ({
+      ...unAuthenticatedSession,
+      setAccessToken: (newToken: string | undefined) => {
+        set({ accessToken: newToken });
+      },
+      setRefreshToken: (newToken: string | undefined) => {
+        set({ refreshToken: newToken });
+      },
+      setUserId: (newUserId: number | undefined) => {
+        set({ userId: newUserId });
+      },
+      setTrustedSession: (isTrusted: boolean | undefined) => {
+        set({ trustedSesion: isTrusted });
+      },
+      isAuthenticated: () => {
+        return get().accessToken != undefined;
+      },
+      clearAccessToken: () => {
+        set({ accessToken: undefined });
+      },
+      reset: () => {
+        set(unAuthenticatedSession);
+      },
+    }),
+    {
+      name: "new-session",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);

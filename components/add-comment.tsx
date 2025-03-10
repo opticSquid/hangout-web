@@ -1,6 +1,7 @@
 "use client";
 
-import { useSessionStore } from "@/lib/hooks/session-provider";
+import useStore from "@/lib/hooks/use-store";
+import { useNewSessionStore } from "@/lib/stores/session-store";
 import { AddCommentRequest } from "@/lib/types/add-comment-request";
 import { SendHorizonal } from "lucide-react";
 import { useState } from "react";
@@ -18,7 +19,7 @@ export function AddComment({
   revalidateCommentAction: () => void;
   parentCommentId?: string;
 }) {
-  const { accessToken } = useSessionStore((state) => state);
+  const store = useStore(useNewSessionStore, (state) => state);
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   async function onSubmit() {
@@ -31,7 +32,7 @@ export function AddComment({
       await fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/comment`, {
         method: "POST",
         headers: new Headers({
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${store?.accessToken}`,
           "Content-Type": "application/json",
         }),
         body: JSON.stringify(newComment),
@@ -45,7 +46,7 @@ export function AddComment({
       await fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/comment/reply`, {
         method: "POST",
         headers: new Headers({
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${store?.accessToken}`,
           "Content-Type": "application/json",
         }),
         body: JSON.stringify(newReply),
