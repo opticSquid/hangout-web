@@ -1,15 +1,16 @@
 "use client";
-import { Heart, MessageCircle, Share2 } from "lucide-react";
-import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { PostInteraction } from "@/lib/types/post-interaction-interface";
-import { usePathname } from "next/navigation";
-import { useSessionStore } from "@/lib/hooks/session-provider";
+import useStore from "@/lib/hooks/use-store";
+import { useNewSessionStore } from "@/lib/stores/session-store";
 import { HasHearted } from "@/lib/types/has-hearted";
+import { PostInteraction } from "@/lib/types/post-interaction-interface";
+import { Heart, MessageCircle, Share2 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 
 export function PostInteractions(postInteraction: PostInteraction) {
-  const { accessToken } = useSessionStore((state) => state);
+  const store = useStore(useNewSessionStore, (state) => state);
   const router = usePathname();
   const activeButtonStyle: string =
     "bg-primaryContainer text-onPrimaryContainer rounded-full";
@@ -18,13 +19,13 @@ export function PostInteractions(postInteraction: PostInteraction) {
   const [heartCount, setHeartCount] = useState(postInteraction.heartCount);
   useEffect(() => {
     async function fetchData() {
-      if (accessToken) {
+      if (store?.accessToken) {
         const isLovedResponse: Response = await fetch(
           `${process.env.NEXT_PUBLIC_POST_API_URL}/heart/${postInteraction.postId}`,
           {
             method: "GET",
             headers: new Headers({
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${store?.accessToken}`,
             }),
           }
         );
@@ -33,13 +34,13 @@ export function PostInteractions(postInteraction: PostInteraction) {
       }
     }
     fetchData();
-  }, [accessToken, postInteraction.postId]);
+  }, [store?.accessToken, postInteraction.postId]);
   const toggleIsLoved = async (): Promise<void> => {
     if (isHearted === false) {
       fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/heart`, {
         method: "POST",
         headers: new Headers({
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${store?.accessToken}`,
           "Content-Type": "application/json",
         }),
         body: JSON.stringify({ postId: postInteraction.postId }),
@@ -49,7 +50,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
       fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/heart`, {
         method: "DELETE",
         headers: new Headers({
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${store?.accessToken}`,
           "Content-Type": "application/json",
         }),
         body: JSON.stringify({ postId: postInteraction.postId }),
@@ -65,7 +66,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
         variant="ghost"
         size="icon"
         className={isHearted ? activeButtonStyle : idleButtonStyle}
-        disabled={!accessToken}
+        disabled={!store?.accessToken}
         onClick={toggleIsLoved}
       >
         <Heart />

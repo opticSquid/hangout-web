@@ -1,13 +1,9 @@
 "use client";
 
-import {
-  createPersistentSessionStore,
-  SessionStore,
-} from "@/lib/stores/session-store";
-import { createContext, ReactNode, useContext, useRef } from "react";
-import { useStore } from "zustand/react";
+import { useNewSessionStore } from "@/lib/stores/session-store";
+import { createContext, ReactNode, useRef } from "react";
 
-type SessionStoreApi = ReturnType<typeof createPersistentSessionStore>;
+type SessionStoreApi = ReturnType<typeof useNewSessionStore>;
 const SessionStoreContext = createContext<SessionStoreApi | undefined>(
   undefined
 );
@@ -18,10 +14,10 @@ interface SessionStoreProviderProps {
 export const SessionStoreProvider = ({
   children,
 }: SessionStoreProviderProps) => {
-  const storeRef = useRef<SessionStoreApi>(undefined);
-  if (!storeRef.current) {
-    storeRef.current = createPersistentSessionStore();
-  }
+  const storeRef = useRef<SessionStoreApi>(useNewSessionStore());
+  // if (!storeRef.current) {
+  //   storeRef.current = useNewSessionStore();
+  // }
   return (
     <SessionStoreContext.Provider value={storeRef.current}>
       {children}
@@ -29,13 +25,13 @@ export const SessionStoreProvider = ({
   );
 };
 
-export const useSessionStore = <T,>(
-  selector: (store: SessionStore) => T
-): T => {
-  const sessionStoreContext = useContext(SessionStoreContext);
-  if (!sessionStoreContext) {
-    throw new Error("useSessionStore must be used within SessionStoreProvider");
-  } else {
-    return useStore(sessionStoreContext, selector);
-  }
-};
+// export const useSessionStore = <T,>(
+//   selector: (store: SessionStore) => T
+// ): T => {
+//   const sessionStoreContext = useContext(SessionStoreContext);
+//   if (!sessionStoreContext) {
+//     throw new Error("useSessionStore must be used within SessionStoreProvider");
+//   } else {
+//     return useStore(useNewSessionStore, selector);
+//   }
+// };

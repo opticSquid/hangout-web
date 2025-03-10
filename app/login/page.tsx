@@ -3,7 +3,8 @@ import { LoadingOverlay } from "@/components/loading-overlay";
 import { LoginForm } from "@/components/login-form";
 import { UntrustedSessionAlert } from "@/components/utrusted-session-alert";
 import { CookiesStorage } from "@/lib/cookie-storage";
-import { useSessionStore } from "@/lib/hooks/session-provider";
+import useStore from "@/lib/hooks/use-store";
+import { useNewSessionStore } from "@/lib/stores/session-store";
 import {
   DeviceInfo,
   OS,
@@ -25,8 +26,7 @@ export default function Login() {
   const [openUntrustedSessionAlert, setOpenUntrustedSessionAlert] =
     useState(false);
   const router = useRouter();
-  const { setAccessToken, setRefreshToken, setUserId, setTrustedSession } =
-    useSessionStore((state) => state);
+  const store = useStore(useNewSessionStore, (state) => state);
   useEffect(() => {
     const userAgent = window.navigator.userAgent;
 
@@ -97,20 +97,20 @@ export default function Login() {
       );
       if (response.status === 200) {
         const session: Session = await response.json();
-        setAccessToken(session.accessToken);
-        setRefreshToken(session.refreshToken);
-        setUserId(session.userId);
-        setTrustedSession(true);
+        store?.setAccessToken(session.accessToken);
+        store?.setRefreshToken(session.refreshToken);
+        store?.setUserId(session.userId);
+        store?.setTrustedSession(true);
         CookiesStorage.setItem("accessToken", session.accessToken);
         CookiesStorage.setItem("refreshToken", session.refreshToken);
         router.push("/");
       } else if (response.status === 307) {
         const session: Session = await response.json();
         console.log("setting access token from login");
-        setAccessToken(session.accessToken);
-        setRefreshToken(session.refreshToken);
-        setUserId(session.userId);
-        setTrustedSession(false);
+        store?.setAccessToken(session.accessToken);
+        store?.setRefreshToken(session.refreshToken);
+        store?.setUserId(session.userId);
+        store?.setTrustedSession(false);
         CookiesStorage.setItem("accessToken", session.accessToken);
         CookiesStorage.setItem("refreshToken", session.refreshToken);
         setOpenUntrustedSessionAlert(true);

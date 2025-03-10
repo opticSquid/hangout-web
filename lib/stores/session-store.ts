@@ -3,7 +3,9 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { SessionAcions } from "../types/session-actions-interface";
 import { SessionState } from "../types/session-store-interface";
+
 export type SessionStore = SessionState & SessionAcions;
+
 const unAuthenticatedSession: SessionState = {
   accessToken: undefined,
   refreshToken: undefined,
@@ -62,8 +64,8 @@ export const createPersistentSessionStore = (
 
 // the store itself does not need any change
 export const useNewSessionStore = create(
-  persist(
-    immer((set, get) => ({
+  persist<SessionStore>(
+    (set, get) => ({
       ...unAuthenticatedSession,
       setAccessToken: (newToken: string | undefined) => {
         set({ accessToken: newToken });
@@ -86,9 +88,10 @@ export const useNewSessionStore = create(
       reset: () => {
         set(unAuthenticatedSession);
       },
-    })),
+    }),
     {
       name: "new-session",
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

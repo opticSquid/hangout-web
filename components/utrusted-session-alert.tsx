@@ -1,6 +1,7 @@
 "use client";
 import { CookiesStorage } from "@/lib/cookie-storage";
-import { useSessionStore } from "@/lib/hooks/session-provider";
+import useStore from "@/lib/hooks/use-store";
+import { useNewSessionStore } from "@/lib/stores/session-store";
 import {
   DeviceInfo,
   OS,
@@ -32,8 +33,7 @@ export function UntrustedSessionAlert({ open }: openDialog) {
     screen: { height: 0.0, width: 0.0 },
   });
   const router: AppRouterInstance = useRouter();
-  const { accessToken, setAccessToken, setRefreshToken, setTrustedSession } =
-    useSessionStore((state) => state);
+  const store = useStore(useNewSessionStore, (state) => state);
   useEffect(() => {
     const userAgent = window.navigator.userAgent;
 
@@ -96,15 +96,15 @@ export function UntrustedSessionAlert({ open }: openDialog) {
             "screen-height": String(deviceInfo.screen.height),
             "screen-width": String(deviceInfo.screen.width),
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${store?.accessToken}`,
           }),
         }
       );
       if (response.status === 200) {
         const session: Session = await response.json();
-        setAccessToken(session.accessToken);
-        setRefreshToken(session.refreshToken);
-        setTrustedSession(true);
+        store?.setAccessToken(session.accessToken);
+        store?.setRefreshToken(session.refreshToken);
+        store?.setTrustedSession(true);
         CookiesStorage.setItem("accessToken", session.accessToken);
         CookiesStorage.setItem("refreshToken", session.refreshToken);
         router.push("/");
