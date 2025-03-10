@@ -1,195 +1,97 @@
 "use client";
 import { Post } from "@/components/post";
-import { useServiceWorkerStore } from "@/lib/hooks/service-worker-provider";
-import { GetPostResponse } from "@/lib/types/get-posts-response";
-import { PagePointer } from "@/lib/types/page-pointer";
+import useFeedUtils from "@/lib/hooks/feed-utils";
 import { NearbyPostInterface } from "@/lib/types/nearby-post-interface";
-import { SearchRadius } from "@/lib/types/search-radius";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function PostFeed() {
-  const locationPermissionDenied = useRef<boolean>(false);
-  const [location, setLocation] = useState<GeolocationPosition>();
-  const { worker } = useServiceWorkerStore((state) => state);
-  const [postList, setPostList] = useState<Map<string, NearbyPostInterface>>(
-    new Map()
+  const { fetchPosts } = useFeedUtils();
+  const [location, setLocation] = useState<GeolocationPosition | undefined>(
+    undefined
   );
-  const pagePointer = useRef<PagePointer>({
-    currentPage: 0,
-    totalPages: undefined,
-  });
-  const searchRadius = useRef<SearchRadius>({
-    min: 0,
-    max: 1000,
-  });
+  const [loadData, setLoadData] = useState<boolean>(true);
+  const [postList, setPostList] = useState<NearbyPostInterface[]>([]);
   const [visiblePostId, setVisiblePostId] = useState<string | null>(null);
+
+  // Fetches user's location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation(position);
+        },
+        (error) => {
+          if (error.PERMISSION_DENIED) {
+            alert("Can not fetch near by posts with out location permission");
+          } else if (error.POSITION_UNAVAILABLE) {
+            alert(
+              "Your location is not available at this moment. Please try again later"
+            );
+          } else {
+            alert(
+              "Something went wrong during fetching your location. Please refresh the page. If the error persists try agian later"
+            );
+          }
+        }
+      );
+    }
+  }, []);
+
+  // Fetches data given user's location
+  useEffect(() => {
+    async function fetchData() {
+      if (location != undefined) {
+        for (let i = 0; i < 5; i++) {
+          const response = await fetchPosts(location);
+          if (response.data) {
+            if (response.data.posts.length > 0) {
+              setPostList((prevState) => {
+                return [...prevState, ...(response.data?.posts || [])];
+              });
+              setLoadData(false);
+              break;
+            }
+          } else {
+            console.error("error fetchig posts");
+            setLoadData(false);
+            break;
+          }
+        }
+      }
+    }
+    if (loadData) {
+      fetchData();
+    }
+  }, [location, loadData, fetchPosts]);
+
   /**
    * Calculates the 75% th element of the list. When that elment becomes visible it triggers additional data load
    */
   const postToTriggerDataLoad = useMemo(
-    () => Math.floor(postList.size * 0.75),
+    () => Math.floor(postList.length * 0.75),
     [postList]
   );
-  const [triggerDataLoad, setTriggerDataLoad] = useState<boolean>(false);
 
   /**
-   * Updates the post list with new posts while avoiding duplicates.
-   */
-  const appendPostList = (newPosts: NearbyPostInterface[]) => {
-    setPostList((prevState) => {
-      const updatedMap = new Map(prevState);
-      newPosts.forEach((post) => {
-        if (!updatedMap.has(post.postId)) {
-          updatedMap.set(post.postId, post);
-        }
-      });
-      return updatedMap;
-    });
-  };
-
-  /**
-   * Fetches posts via the service worker and appends them to the post list.
-   */
-  const fetchAndAppendPosts = (): Promise<boolean> => {
-    return new Promise((resolve, reject) => {
-      if (worker && location) {
-        worker.active?.postMessage({
-          type: "fetch-posts-request",
-          lat: location.coords.latitude,
-          lon: location.coords.longitude,
-          min: searchRadius.current.min,
-          max: searchRadius.current.max,
-          pageNumber: pagePointer.current.currentPage,
-          backendUrl: process.env.NEXT_PUBLIC_POST_API_URL as string,
-        });
-
-        const handleMessage = (event: MessageEvent) => {
-          if (event.data.type === "fetch-posts-response") {
-            navigator.serviceWorker.removeEventListener(
-              "message",
-              handleMessage
-            );
-
-            const response = event.data.response as GetPostResponse | null;
-
-            if (response && response.posts.length > 0) {
-              appendPostList(response.posts);
-              pagePointer.current.totalPages = response.totalPages ?? undefined;
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          }
-        };
-
-        navigator.serviceWorker.addEventListener("message", handleMessage);
-      } else {
-        reject(new Error("Location or worker is not defined"));
-      }
-    });
-  };
-
-  /**
-   * Retries fetching posts with an increasing search radius.
-   */
-  const attemptFetchWithRadiusIncrease = async (
-    maxRetries: number
-  ): Promise<boolean> => {
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      console.log(
-        `attempt:${attempt} to call fetch and append posts. will wait promise resolution. time: ${new Date().toISOString()}`
-      );
-      const success = await fetchAndAppendPosts();
-      console.log(
-        `attempt:${attempt} to call fetch and append posts. Promise resolved to ${success}. time: ${new Date().toISOString()}`
-      );
-      if (success) return true;
-
-      searchRadius.current = {
-        min: searchRadius.current.max,
-        max: searchRadius.current.max + 1000,
-      };
-    }
-    return false;
-  };
-
-  /**
-   * Resets the page pointer to the initial state.
-   */
-  const resetPagePointer = (): void => {
-    pagePointer.current = { currentPage: 1, totalPages: undefined };
-  };
-
-  /**
-   * When service worker registers fetches the location and triggers intial data load by setting triggerDataLoad to true
+   * Watches the 75% th element of the list. when that is visible, starts to load additional posts in background
    */
   useEffect(() => {
-    if (navigator.geolocation && "serviceWorker" in navigator && worker) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log(
-            `worker and location defined triggering initial data load. time: ${new Date().toISOString()}`
-          );
-          setLocation(position);
-          setTriggerDataLoad(true);
+    const posts = document.querySelectorAll(".post-container");
+    if (posts.length > 0) {
+      const triggerElement = posts[postToTriggerDataLoad];
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setLoadData(true);
+          }
         },
-        (error) => {
-          if (error.code === error.PERMISSION_DENIED) {
-            locationPermissionDenied.current = true;
-          }
-        }
+        { threshold: 0.5 }
       );
+
+      if (triggerElement) observer.observe(triggerElement);
+      return () => observer.unobserve(triggerElement);
     }
-  }, [worker]);
-
-  /**
-   * When trigger data load is true triggers additionaln data load
-   */
-  useEffect(() => {
-    /**
-     * Handles the initial data load or radius-based retries.
-     */
-    const loadInitialData = async () => {
-      if (!triggerDataLoad || !location) {
-        setTriggerDataLoad(false);
-        return;
-      }
-      console.log(`trigger data load has been set to true. loading data. 
-      time: ${new Date().toISOString()}`);
-      if (!pagePointer.current.totalPages) {
-        console.log(
-          `total pages is undefined triggering initial data load. time: ${new Date().toISOString()}`
-        );
-        pagePointer.current.currentPage += 1;
-        await attemptFetchWithRadiusIncrease(5);
-      } else if (
-        pagePointer.current.currentPage < pagePointer.current.totalPages
-      ) {
-        console.log(
-          `triggering data load of next page with same search radius. time: ${new Date().toISOString()}`
-        );
-        pagePointer.current.currentPage += 1;
-        const success = await fetchAndAppendPosts();
-        if (!success) pagePointer.current.currentPage -= 1;
-      } else {
-        console.log(
-          `current Page ${pagePointer.current.currentPage} >= total Pages ${
-            pagePointer.current.totalPages
-          }. Resetting page pointer and searching for larger search radius. time: ${new Date().toISOString()}`
-        );
-        resetPagePointer();
-        // initially increasing the search radius here so that the first request attempt only goes for larger search radius
-        searchRadius.current = {
-          min: searchRadius.current.max,
-          max: searchRadius.current.max + 1000,
-        };
-        await attemptFetchWithRadiusIncrease(5);
-      }
-
-      setTriggerDataLoad(false);
-    };
-    loadInitialData();
-  }, [triggerDataLoad]);
+  }, [postToTriggerDataLoad]);
 
   /**
    * autoplays the currently visible video and pauses others
@@ -211,48 +113,22 @@ export default function PostFeed() {
     return () => postElements.forEach((el) => observer.unobserve(el));
   }, [postToTriggerDataLoad]);
 
-  /**
-   * Watches the 75% th element of the list. when that is visible, starts to load additional posts in background
-   */
-  useEffect(() => {
-    console.log(
-      `post list changed, reobserving 75% th element. time: ${new Date().toISOString()}`
-    );
-    const postElements = document.querySelectorAll(".post-container");
-    if (postElements.length > 0) {
-      const triggerElement = postElements[postToTriggerDataLoad];
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            console.log(
-              `75% th element i.e., ${postToTriggerDataLoad}th element is visible triggering additional data load. time: ${new Date().toISOString()}`
-            );
-            setTriggerDataLoad(true);
-          }
-        },
-        { threshold: 0.5 }
-      );
-
-      if (triggerElement) observer.observe(triggerElement);
-      return () => observer.unobserve(triggerElement);
-    }
-  }, [postToTriggerDataLoad, postList]);
-
   return (
     <div className="flex flex-col gap-y-4 snap-mandatory snap-y pb-12">
-      {Array.from(postList.values()).map((p) => (
-        <div
-          key={p.postId}
-          post-id={p.postId}
-          className="post-container snap-always snap-start"
-        >
-          <Post
-            post={p}
-            canPlayVideo={p.postId === visiblePostId}
-            showDistance={true}
-          />
-        </div>
-      ))}
+      {postList.length > 0 &&
+        postList.map((post) => (
+          <div
+            key={post.postId}
+            post-id={post.postId}
+            className="post-container snap-always snap-start"
+          >
+            <Post
+              post={post}
+              canPlayVideo={post.postId === visiblePostId}
+              showDistance={true}
+            />
+          </div>
+        ))}
     </div>
   );
 }
