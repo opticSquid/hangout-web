@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { CookiesStorage } from "../cookie-storage";
-import { useNewSessionStore } from "../stores/session-store";
+import { useNewSessionStore } from "../stores/old-session-store";
 import {
   DeviceInfo,
   OS,

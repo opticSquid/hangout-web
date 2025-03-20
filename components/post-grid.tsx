@@ -1,7 +1,7 @@
 "use client";
 
 import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useNewSessionStore } from "@/lib/stores/old-session-store";
 import { ParticularPostInterface } from "@/lib/types/particular-post-interface";
 import { useEffect, useState } from "react";
 import { Post } from "./post";

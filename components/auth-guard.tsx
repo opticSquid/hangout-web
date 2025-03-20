@@ -1,6 +1,6 @@
 "use client";
 import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useNewSessionStore } from "@/lib/stores/old-session-store";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 

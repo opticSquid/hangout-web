@@ -1,7 +1,7 @@
 import { BottomBar } from "@/components/bottom-bar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TopBar } from "@/components/top-bar";
-import { SessionStoreProvider } from "@/lib/hooks/session-provider";
+import { SessionStoreProvider } from "@/lib/hooks/old-session-provider";
 import type { Metadata } from "next";
 import { Roboto_Flex } from "next/font/google";
 import "./globals.css";

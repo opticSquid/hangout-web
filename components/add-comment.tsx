@@ -1,7 +1,7 @@
 "use client";
 
 import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useNewSessionStore } from "@/lib/stores/old-session-store";
 import { AddCommentRequest } from "@/lib/types/add-comment-request";
 import { SendHorizonal } from "lucide-react";
 import { useState } from "react";

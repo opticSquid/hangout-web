@@ -1,6 +1,6 @@
 "use client";
 import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useNewSessionStore } from "@/lib/stores/old-session-store";
 import { HasHearted } from "@/lib/types/has-hearted";
 import { PostInteraction } from "@/lib/types/post-interaction-interface";
 import { Heart, MessageCircle, Share2 } from "lucide-react";

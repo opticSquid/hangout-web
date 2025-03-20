@@ -1,6 +1,6 @@
 "use client";
 import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useNewSessionStore } from "@/lib/stores/old-session-store";
 import { BadgePlus, Compass, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

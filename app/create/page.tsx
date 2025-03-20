@@ -2,7 +2,7 @@
 import { AddContentDescription } from "@/components/add-content-description";
 import { ShootMedia } from "@/components/shoot-media";
 import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useNewSessionStore } from "@/lib/stores/old-session-store";
 import { MediaType } from "@/lib/types/accepted-media-type";
 import dynamic from "next/dynamic";
 import { useState } from "react";

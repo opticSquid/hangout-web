@@ -4,7 +4,7 @@ import { LoginForm } from "@/components/login-form";
 import { UntrustedSessionAlert } from "@/components/utrusted-session-alert";
 import { CookiesStorage } from "@/lib/cookie-storage";
 import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useNewSessionStore } from "@/lib/stores/old-session-store";
 import {
   DeviceInfo,
   OS,

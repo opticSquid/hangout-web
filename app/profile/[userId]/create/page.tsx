@@ -3,7 +3,7 @@
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { ProfileForm } from "@/components/profile-form";
 import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useNewSessionStore } from "@/lib/stores/old-session-store";
 import { ProfileFormSchema } from "@/lib/types/profile-form-schema";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
