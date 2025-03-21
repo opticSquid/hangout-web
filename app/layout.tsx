@@ -34,9 +34,9 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <DataInitalizer />
-            <div className="h-screen flex flex-col">
+            <div className="h-screen">
               <TopBar />
-              <main className="grow overflow-y-auto">{children}</main>
+              <main className="h-[90vh] overflow-y-auto">{children}</main>
               <BottomBar />
             </div>
           </ThemeProvider>

@@ -1,7 +1,19 @@
 "use client";
+import { EmptyFeed } from "@/components/empty-feed";
 import { Post } from "@/components/post";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import useFeedUtils from "@/lib/hooks/feed-utils";
 import { NearbyPostInterface } from "@/lib/types/nearby-post-interface";
+import { Link, BadgePlus } from "lucide-react";
+import router from "next/router";
 import { useEffect, useMemo, useState } from "react";
 
 export default function PostFeed() {
@@ -115,7 +127,7 @@ export default function PostFeed() {
 
   return (
     <div className="flex flex-col gap-y-4 snap-mandatory snap-y pb-12">
-      {postList.length > 0 &&
+      {postList.length > 0 ? (
         postList.map((post) => (
           <div
             key={post.postId}
@@ -128,7 +140,10 @@ export default function PostFeed() {
               showDistance={true}
             />
           </div>
-        ))}
+        ))
+      ) : (
+        <EmptyFeed />
+      )}
     </div>
   );
 }
