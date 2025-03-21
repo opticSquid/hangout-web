@@ -1,13 +1,12 @@
 "use client";
-import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/old-session-store";
+import useSessionProvider from "@/lib/hooks/session-provider";
 import { BadgePlus, Compass, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 export function BottomBar() {
   const router: string = usePathname();
-  const store = useStore(useNewSessionStore, (state) => state);
+  const [sessionState] = useSessionProvider();
   const activeButtonStyle: string =
     "bg-primaryContainer text-onPrimaryContainer rounded-full";
   const idleButtonStyle: string = "bg-transparent text-primary rounded-full";
@@ -33,13 +32,13 @@ export function BottomBar() {
         </Button>
         <Button
           className={
-            router === `/profile/${store?.userId}`
+            router === `/profile/${sessionState.userId}`
               ? activeButtonStyle
               : idleButtonStyle
           }
           size="icon"
         >
-          <Link href={`/profile/${store?.userId}`}>
+          <Link href={`/profile/${sessionState.userId}`}>
             <User size={24} />
           </Link>
         </Button>

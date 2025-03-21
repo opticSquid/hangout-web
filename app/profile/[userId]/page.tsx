@@ -1,3 +1,4 @@
+import { Logout } from "@/components/logout";
 import { PhotoViewer } from "@/components/photo-viewer";
 import { PostGrid } from "@/components/post-grid";
 import { Button } from "@/components/ui/button";
@@ -28,8 +29,11 @@ export default async function Profile({
             radius="medium"
           />
         </div>
-        <div className="grow text-lg font-medium tracking-wide">
-          {profileData.name}
+        <div className="flex flex-col">
+          <div className="grow text-lg font-medium tracking-wide">
+            {profileData.name}
+          </div>
+          <Logout />
         </div>
       </div>
       <div className="flex flex-row border-t border-b justify-center">

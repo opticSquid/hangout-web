@@ -1,24 +1,23 @@
 "use client";
-import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/old-session-store";
+import useSessionProvider from "@/lib/hooks/session-provider";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 
 export function AuthGuard({ children }: { children: ReactNode }) {
   const router = useRouter();
   //const { isAuthenticated } = useSessionStore((state) => state);
-  const store = useStore(useNewSessionStore, (state) => state);
+  const [, sessionActions] = useSessionProvider();
   const [isAllowed, setIsAllowed] = useState<boolean>(false);
-  const authenticationStatus = store?.isAuthenticated();
+  const authenticationStatus = sessionActions.isAuthenticated();
   useEffect(() => {
-    console.log("is authenticated: ", store?.isAuthenticated());
-    if (!store?.isAuthenticated()) {
+    console.log("is authenticated: ", sessionActions.isAuthenticated());
+    if (!sessionActions?.isAuthenticated()) {
       setIsAllowed(false);
       router.replace("/login");
     } else {
       setIsAllowed(true);
     }
-  }, [store?.isAuthenticated, authenticationStatus, router]);
+  }, [sessionActions?.isAuthenticated, authenticationStatus, router]);
   if (!isAllowed) {
     return null;
   } else {
