@@ -7,7 +7,6 @@ import {
   OS,
   ScreenDimensions,
 } from "../types/device-identifier-interface";
-import { useServiceWorkerStore } from "./service-worker-provider";
 import useSessionProvider from "./session-provider";
 
 export function DataInitalizer() {
@@ -16,8 +15,6 @@ export function DataInitalizer() {
     screen: { height: 0.0, width: 0.0 },
   });
   const [sessionState, sessionActions] = useSessionProvider();
-
-  const { addWorker } = useServiceWorkerStore((state) => state);
   const router = useRouter();
   // this useEffect hook collects device info and sets the headers
   useEffect(() => {
@@ -89,8 +86,6 @@ export function DataInitalizer() {
             "service worker registered in scope: ",
             registration.scope
           );
-          // adding this service worker in context so that it can be called from anywhere
-          addWorker(registration);
           if (sessionState.refreshToken) {
             console.info("user logged in, starting the timer to renew tokens");
             // ** This call immidiate after loading is required becuase we need to get a new token after a user had went offline for some time and came back
@@ -111,7 +106,6 @@ export function DataInitalizer() {
     }
   }, [
     sessionState.refreshToken,
-    addWorker,
     sessionActions.clearAccessToken,
     sessionActions.setAccessToken,
   ]);
