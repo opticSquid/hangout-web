@@ -25,6 +25,7 @@ export default function Login() {
     useState(false);
   const router = useRouter();
   const [, sessionActions] = useSessionProvider();
+  // collects device info
   useEffect(() => {
     const userAgent = window.navigator.userAgent;
 
@@ -99,8 +100,6 @@ export default function Login() {
         sessionActions.setRefreshToken(session.refreshToken);
         sessionActions.setUserId(session.userId);
         sessionActions.setTrustedSession(true);
-        // CookiesStorage.setItem("accessToken", session.accessToken);
-        // CookiesStorage.setItem("refreshToken", session.refreshToken);
         router.push("/");
       } else if (response.status === 307) {
         const session: Session = await response.json();
@@ -109,8 +108,6 @@ export default function Login() {
         sessionActions.setRefreshToken(session.refreshToken);
         sessionActions.setUserId(session.userId);
         sessionActions.setTrustedSession(false);
-        // CookiesStorage.setItem("accessToken", session.accessToken);
-        // CookiesStorage.setItem("refreshToken", session.refreshToken);
         setOpenUntrustedSessionAlert(true);
       } else if (response.status >= 400 && response.status < 500) {
         alert("could not login user. Username/Password wrong");

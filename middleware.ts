@@ -6,11 +6,13 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(request: NextRequest) {
   const cookieStore = await cookies();
   const accessToken: RequestCookie | undefined = cookieStore.get(
-    "hangout-session|accessToken"
+    "hangout|accessToken"
   );
   if (accessToken === undefined) {
+    console.log("[middleware] access token not present");
     return NextResponse.redirect(new URL("/login", request.url));
   } else {
+    console.log("[middleware] access token is present");
     //TODO: do a backend call here to verify the token
     return NextResponse.next();
   }

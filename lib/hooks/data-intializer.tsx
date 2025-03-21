@@ -100,7 +100,6 @@ export function DataInitalizer() {
       navigator.serviceWorker.addEventListener("message", (event) => {
         if (event.data.type === "renew-token-response") {
           sessionActions.setAccessToken(event.data.accessToken);
-          CookiesStorage.setItem("accessToken", event.data.accessToken);
         }
       });
     }
