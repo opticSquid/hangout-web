@@ -18,7 +18,7 @@ export function AddComment({
   revalidateCommentAction: () => void;
   parentCommentId?: string;
 }) {
-  const [sessionState, sessionActions] = useSessionProvider();
+  const [sessionState] = useSessionProvider();
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   async function onSubmit() {

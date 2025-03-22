@@ -1,19 +1,8 @@
 "use client";
 import { EmptyFeed } from "@/components/empty-feed";
 import { Post } from "@/components/post";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import useFeedUtils from "@/lib/hooks/feed-utils";
 import { NearbyPostInterface } from "@/lib/types/nearby-post-interface";
-import { Link, BadgePlus } from "lucide-react";
-import router from "next/router";
 import { useEffect, useMemo, useState } from "react";
 
 export default function PostFeed() {

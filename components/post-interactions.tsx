@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
 export function PostInteractions(postInteraction: PostInteraction) {
-  const [sessionState, sessionActions] = useSessionProvider();
+  const [sessionState] = useSessionProvider();
   const router = usePathname();
   const activeButtonStyle: string =
     "bg-primaryContainer text-onPrimaryContainer rounded-full";
