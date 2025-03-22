@@ -76,6 +76,7 @@ export default function Login() {
       window.removeEventListener("resize", updateDeviceInfo);
     };
   }, []);
+
   async function onSubmit(
     values: z.infer<typeof LoginFormSchema>
   ): Promise<void> {

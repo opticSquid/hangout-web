@@ -1,7 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { CookiesStorage } from "../cookie-storage";
 import {
   DeviceInfo,
   OS,
@@ -122,7 +121,7 @@ export function DataInitalizer() {
         }
       );
       if (profileResponse.status === 404) {
-        router.replace(`/profile/${sessionState.userId}/create`);
+        router.replace(`/profile/create`);
       }
     }
     if (sessionState.accessToken) {

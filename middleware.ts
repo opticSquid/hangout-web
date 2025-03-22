@@ -5,9 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
   const cookieStore = await cookies();
-  const accessToken: RequestCookie | undefined = cookieStore.get(
+  const accessToken: string | undefined = cookieStore.get(
     "hangout|accessToken"
-  );
+  )?.value;
   if (accessToken === undefined) {
     console.log("[middleware] access token not present");
     return NextResponse.redirect(new URL("/login", request.url));
@@ -20,10 +20,5 @@ export async function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: [
-    "/profile/:userId",
-    "/create",
-    "/notifications",
-    "/comments/:postId",
-  ],
+  matcher: ["/profile", "/create", "/notifications", "/comments/:postId"],
 };

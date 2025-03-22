@@ -1,49 +1,47 @@
 "use client";
-import useSessionProvider from "@/lib/hooks/session-provider";
 import { BadgePlus, Compass, User } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
+
 export function BottomBar() {
-  const path: string = usePathname();
   const router = useRouter();
-  const [sessionState] = useSessionProvider();
-  const activeButtonStyle: string =
+  const pathname = usePathname(); // Directly from Next.js router
+  const [currentPath, setCurrentPath] = useState(pathname);
+
+  useEffect(() => {
+    setCurrentPath(pathname); // Ensure the state updates on route change
+  }, [pathname]);
+
+  const activeButtonStyle =
     "bg-primaryContainer text-onPrimaryContainer rounded-full";
-  const idleButtonStyle: string = "bg-transparent text-primary rounded-full";
-  const navigateHome = () => {
-    router.push("/");
-  };
-  const navigateCreate = () => {
-    router.push("/create");
-  };
-  const navigateProfile = () => {
-    router.push(`/profile/${sessionState.userId}`);
-  };
+  const idleButtonStyle = "bg-transparent text-primary rounded-full";
+
   return (
     <footer className="bg-background dark:bg-secondary h-[5vh] w-screen drop-shadow-4xl flex flex-row justify-around">
       <Button
-        className={path === "/" ? activeButtonStyle : idleButtonStyle}
+        className={currentPath === "/" ? activeButtonStyle : idleButtonStyle}
         variant="link"
         size="icon"
-        onClick={navigateHome}
+        onClick={() => router.push("/")}
       >
         <Compass size={24} />
       </Button>
       <Button
-        className={path === "/create" ? activeButtonStyle : idleButtonStyle}
+        className={
+          currentPath === "/create" ? activeButtonStyle : idleButtonStyle
+        }
         size="icon"
-        onClick={navigateCreate}
+        onClick={() => router.push("/create")}
       >
         <BadgePlus size={24} />
       </Button>
       <Button
         className={
-          path === `/profile/${sessionState.userId}`
-            ? activeButtonStyle
-            : idleButtonStyle
+          currentPath === "/profile" ? activeButtonStyle : idleButtonStyle
         }
         size="icon"
-        onClick={navigateProfile}
+        onClick={() => router.push("/profile")}
       >
         <User size={24} />
       </Button>
