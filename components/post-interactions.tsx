@@ -15,6 +15,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
     "bg-primaryContainer text-onPrimaryContainer rounded-full";
   const idleButtonStyle: string = "bg-transparent text-primary rounded-full";
   const [isHearted, setIsHearted] = useState(false);
+  const [disableHeart, setDisableHeart] = useState<boolean>(false);
   const [heartCount, setHeartCount] = useState(postInteraction.heartCount);
   useEffect(() => {
     async function fetchData() {
@@ -35,6 +36,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
     fetchData();
   }, [sessionState.accessToken, postInteraction.postId]);
   const toggleIsLoved = async (): Promise<void> => {
+    setDisableHeart(true);
     if (isHearted === false) {
       fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/heart`, {
         method: "POST",
@@ -57,6 +59,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
       setHeartCount((prevState) => prevState - 1);
     }
     setIsHearted(!isHearted);
+    setDisableHeart(false);
   };
   return (
     <div className="flex flex-row items-center">
@@ -65,7 +68,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
         variant="ghost"
         size="icon"
         className={isHearted ? activeButtonStyle : idleButtonStyle}
-        disabled={!sessionState.accessToken}
+        disabled={!sessionState.accessToken || disableHeart}
         onClick={toggleIsLoved}
       >
         <Heart />
