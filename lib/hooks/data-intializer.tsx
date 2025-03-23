@@ -102,12 +102,7 @@ export function DataInitalizer() {
         }
       });
     }
-  }, [
-    sessionState.refreshToken,
-    sessionActions.clearAccessToken,
-    sessionActions.setAccessToken,
-    sessionActions,
-  ]);
+  }, [sessionState.refreshToken]);
 
   // This useEffect checks if the profile of the logged in user exist, otherwise sends them to create profile page
   useEffect(() => {
