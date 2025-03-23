@@ -2,9 +2,7 @@
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { LoginForm } from "@/components/login-form";
 import { UntrustedSessionAlert } from "@/components/utrusted-session-alert";
-import { CookiesStorage } from "@/lib/cookie-storage";
-import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import {
   DeviceInfo,
   OS,
@@ -26,7 +24,8 @@ export default function Login() {
   const [openUntrustedSessionAlert, setOpenUntrustedSessionAlert] =
     useState(false);
   const router = useRouter();
-  const store = useStore(useNewSessionStore, (state) => state);
+  const [, sessionActions] = useSessionContext();
+  // collects device info
   useEffect(() => {
     const userAgent = window.navigator.userAgent;
 
@@ -77,6 +76,7 @@ export default function Login() {
       window.removeEventListener("resize", updateDeviceInfo);
     };
   }, []);
+
   async function onSubmit(
     values: z.infer<typeof LoginFormSchema>
   ): Promise<void> {
@@ -97,22 +97,18 @@ export default function Login() {
       );
       if (response.status === 200) {
         const session: Session = await response.json();
-        store?.setAccessToken(session.accessToken);
-        store?.setRefreshToken(session.refreshToken);
-        store?.setUserId(session.userId);
-        store?.setTrustedSession(true);
-        CookiesStorage.setItem("accessToken", session.accessToken);
-        CookiesStorage.setItem("refreshToken", session.refreshToken);
+        sessionActions.setAccessToken(session.accessToken);
+        sessionActions.setRefreshToken(session.refreshToken);
+        sessionActions.setUserId(session.userId);
+        sessionActions.setTrustedSession(true);
         router.push("/");
       } else if (response.status === 307) {
         const session: Session = await response.json();
         console.log("setting access token from login");
-        store?.setAccessToken(session.accessToken);
-        store?.setRefreshToken(session.refreshToken);
-        store?.setUserId(session.userId);
-        store?.setTrustedSession(false);
-        CookiesStorage.setItem("accessToken", session.accessToken);
-        CookiesStorage.setItem("refreshToken", session.refreshToken);
+        sessionActions.setAccessToken(session.accessToken);
+        sessionActions.setRefreshToken(session.refreshToken);
+        sessionActions.setUserId(session.userId);
+        sessionActions.setTrustedSession(false);
         setOpenUntrustedSessionAlert(true);
       } else if (response.status >= 400 && response.status < 500) {
         alert("could not login user. Username/Password wrong");

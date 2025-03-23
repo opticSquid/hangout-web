@@ -2,15 +2,14 @@
 
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { ProfileForm } from "@/components/profile-form";
-import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import { ProfileFormSchema } from "@/lib/types/profile-form-schema";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function CreateProfile() {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const store = useStore(useNewSessionStore, (state) => state);
+  const [sessionState] = useSessionContext();
   const router = useRouter();
   async function onSubmit(values: ProfileFormSchema): Promise<void> {
     console.log("values: ", values);
@@ -24,7 +23,7 @@ export default function CreateProfile() {
       {
         method: "POST",
         headers: new Headers({
-          Authorization: `Bearer ${store?.accessToken}`,
+          Authorization: `Bearer ${sessionState.accessToken}`,
         }),
         body: formData,
       }

@@ -1,24 +1,19 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { CookiesStorage } from "../cookie-storage";
-import { useNewSessionStore } from "../stores/session-store";
 import {
   DeviceInfo,
   OS,
   ScreenDimensions,
 } from "../types/device-identifier-interface";
-import { useServiceWorkerStore } from "./service-worker-provider";
-import useStore from "./use-store";
+import { useSessionContext } from "./session-provider";
 
 export function DataInitalizer() {
   const deviceInfo = useRef<DeviceInfo>({
     os: { name: "", version: "" },
     screen: { height: 0.0, width: 0.0 },
   });
-  const store = useStore(useNewSessionStore, (state) => state);
-
-  const { addWorker } = useServiceWorkerStore((state) => state);
+  const [sessionState, sessionActions] = useSessionContext();
   const router = useRouter();
   // this useEffect hook collects device info and sets the headers
   useEffect(() => {
@@ -77,7 +72,7 @@ export function DataInitalizer() {
     function createRenewTokenEvent(registration: ServiceWorkerRegistration) {
       registration.active?.postMessage({
         type: "renew-token-request",
-        refreshToken: store?.refreshToken,
+        refreshToken: sessionState.refreshToken,
         deviceInfo: deviceInfo.current,
         backendUrl: process.env.NEXT_PUBLIC_BACKEND_BASE_URL,
       });
@@ -90,32 +85,24 @@ export function DataInitalizer() {
             "service worker registered in scope: ",
             registration.scope
           );
-          // adding this service worker in context so that it can be called from anywhere
-          addWorker(registration);
-          if (store?.refreshToken) {
+          if (sessionState.refreshToken) {
             console.info("user logged in, starting the timer to renew tokens");
             // ** This call immidiate after loading is required becuase we need to get a new token after a user had went offline for some time and came back
             createRenewTokenEvent(registration);
             setInterval(() => {
               console.log("firing renew token request event");
-              store?.clearAccessToken();
+              sessionActions.clearAccessToken();
               createRenewTokenEvent(registration);
             }, 5 * 60 * 1000);
           }
         });
       navigator.serviceWorker.addEventListener("message", (event) => {
         if (event.data.type === "renew-token-response") {
-          store?.setAccessToken(event.data.accessToken);
-          CookiesStorage.setItem("accessToken", event.data.accessToken);
+          sessionActions.setAccessToken(event.data.accessToken);
         }
       });
     }
-  }, [
-    store?.refreshToken,
-    addWorker,
-    store?.clearAccessToken,
-    store?.setAccessToken,
-  ]);
+  }, [sessionState.refreshToken]);
 
   // This useEffect checks if the profile of the logged in user exist, otherwise sends them to create profile page
   useEffect(() => {
@@ -125,23 +112,18 @@ export function DataInitalizer() {
         {
           method: "GET",
           headers: new Headers({
-            Authorization: `Bearer ${store?.accessToken}`,
+            Authorization: `Bearer ${sessionState.accessToken}`,
           }),
         }
       );
       if (profileResponse.status === 404) {
-        router.replace(`/profile/${store?.userId}/create`);
+        router.replace(`/profile/create`);
       }
     }
-    if (store?.accessToken) {
+    if (sessionState.accessToken) {
       checkProfileExistence();
     }
-  }, [store?.accessToken, router, store?.userId]);
+  }, [sessionState.accessToken, router, sessionState.userId]);
 
-  //* Needed if we use VideoJs video player
-  //setting this property for video-js to make it not choose any dimension
-  // useEffect(() => {
-  //   window.VIDEOJS_NO_DYNAMIC_STYLE = true;
-  // });
   return <></>;
 }

@@ -1,49 +1,50 @@
 "use client";
-import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
 import { BadgePlus, Compass, User } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
+
 export function BottomBar() {
-  const router: string = usePathname();
-  const store = useStore(useNewSessionStore, (state) => state);
-  const activeButtonStyle: string =
+  const router = useRouter();
+  const pathname = usePathname(); // Directly from Next.js router
+  const [currentPath, setCurrentPath] = useState(pathname);
+
+  useEffect(() => {
+    setCurrentPath(pathname); // Ensure the state updates on route change
+  }, [pathname]);
+
+  const activeButtonStyle =
     "bg-primaryContainer text-onPrimaryContainer rounded-full";
-  const idleButtonStyle: string = "bg-transparent text-primary rounded-full";
+  const idleButtonStyle = "bg-transparent text-primary rounded-full";
+
   return (
-    <footer className="bg-background dark:bg-secondary py-1 drop-shadow-4xl">
-      <div className="flex justify-around">
-        <Button
-          className={router === "/" ? activeButtonStyle : idleButtonStyle}
-          variant="link"
-          size="icon"
-        >
-          <Link href="/">
-            <Compass size={24} />
-          </Link>
-        </Button>
-        <Button
-          className={router === "/create" ? activeButtonStyle : idleButtonStyle}
-          size="icon"
-        >
-          <Link href="/create">
-            <BadgePlus size={24} />
-          </Link>
-        </Button>
-        <Button
-          className={
-            router === `/profile/${store?.userId}`
-              ? activeButtonStyle
-              : idleButtonStyle
-          }
-          size="icon"
-        >
-          <Link href={`/profile/${store?.userId}`}>
-            <User size={24} />
-          </Link>
-        </Button>
-      </div>
+    <footer className="bg-background dark:bg-secondary drop-shadow-4xl flex flex-row justify-around items-stretch py-1">
+      <Button
+        className={currentPath === "/" ? activeButtonStyle : idleButtonStyle}
+        variant="link"
+        size="icon"
+        onClick={() => router.push("/")}
+      >
+        <Compass size={24} />
+      </Button>
+      <Button
+        className={
+          currentPath === "/create" ? activeButtonStyle : idleButtonStyle
+        }
+        size="icon"
+        onClick={() => router.push("/create")}
+      >
+        <BadgePlus size={24} />
+      </Button>
+      <Button
+        className={
+          currentPath === "/profile" ? activeButtonStyle : idleButtonStyle
+        }
+        size="icon"
+        onClick={() => router.push("/profile")}
+      >
+        <User size={24} />
+      </Button>
     </footer>
   );
 }

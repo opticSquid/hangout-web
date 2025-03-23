@@ -1,8 +1,7 @@
 "use client";
 import { AddContentDescription } from "@/components/add-content-description";
 import { ShootMedia } from "@/components/shoot-media";
-import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import { MediaType } from "@/lib/types/accepted-media-type";
 import dynamic from "next/dynamic";
 import { useState } from "react";
@@ -15,7 +14,7 @@ const AddLocationContainer = dynamic(
   }
 );
 export default function CreatePost() {
-  const store = useStore(useNewSessionStore, (state) => state);
+  const [sessionState] = useSessionContext();
   const [step, setStep] = useState<number>(1);
   const [media, setMedia] = useState<Blob | null>(null);
   const [mediaType, setMediaType] = useState<MediaType>(null);
@@ -82,7 +81,7 @@ export default function CreatePost() {
     const response = await fetch(url, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${store?.accessToken}`,
+        Authorization: `Bearer ${sessionState.accessToken}`,
       },
       body: formData,
     });

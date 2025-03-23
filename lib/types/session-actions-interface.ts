@@ -1,4 +1,4 @@
-export type SessionAcions = {
+export type SessionActions = {
   setAccessToken: (newToken: string | undefined) => void;
   setRefreshToken: (newToken: string | undefined) => void;
   setUserId: (newUserId: number | undefined) => void;

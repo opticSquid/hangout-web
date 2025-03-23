@@ -1,6 +1,5 @@
 "use client";
-import useStore from "@/lib/hooks/use-store";
-import { useNewSessionStore } from "@/lib/stores/session-store";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import { HasHearted } from "@/lib/types/has-hearted";
 import { PostInteraction } from "@/lib/types/post-interaction-interface";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
@@ -10,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
 export function PostInteractions(postInteraction: PostInteraction) {
-  const store = useStore(useNewSessionStore, (state) => state);
+  const [sessionState] = useSessionContext();
   const router = usePathname();
   const activeButtonStyle: string =
     "bg-primaryContainer text-onPrimaryContainer rounded-full";
@@ -19,13 +18,13 @@ export function PostInteractions(postInteraction: PostInteraction) {
   const [heartCount, setHeartCount] = useState(postInteraction.heartCount);
   useEffect(() => {
     async function fetchData() {
-      if (store?.accessToken) {
+      if (sessionState.accessToken) {
         const isLovedResponse: Response = await fetch(
           `${process.env.NEXT_PUBLIC_POST_API_URL}/heart/${postInteraction.postId}`,
           {
             method: "GET",
             headers: new Headers({
-              Authorization: `Bearer ${store?.accessToken}`,
+              Authorization: `Bearer ${sessionState.accessToken}`,
             }),
           }
         );
@@ -34,13 +33,13 @@ export function PostInteractions(postInteraction: PostInteraction) {
       }
     }
     fetchData();
-  }, [store?.accessToken, postInteraction.postId]);
+  }, [sessionState.accessToken, postInteraction.postId]);
   const toggleIsLoved = async (): Promise<void> => {
     if (isHearted === false) {
       fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/heart`, {
         method: "POST",
         headers: new Headers({
-          Authorization: `Bearer ${store?.accessToken}`,
+          Authorization: `Bearer ${sessionState.accessToken}`,
           "Content-Type": "application/json",
         }),
         body: JSON.stringify({ postId: postInteraction.postId }),
@@ -50,7 +49,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
       fetch(`${process.env.NEXT_PUBLIC_POST_API_URL}/heart`, {
         method: "DELETE",
         headers: new Headers({
-          Authorization: `Bearer ${store?.accessToken}`,
+          Authorization: `Bearer ${sessionState.accessToken}`,
           "Content-Type": "application/json",
         }),
         body: JSON.stringify({ postId: postInteraction.postId }),
@@ -66,7 +65,7 @@ export function PostInteractions(postInteraction: PostInteraction) {
         variant="ghost"
         size="icon"
         className={isHearted ? activeButtonStyle : idleButtonStyle}
-        disabled={!store?.accessToken}
+        disabled={!sessionState.accessToken}
         onClick={toggleIsLoved}
       >
         <Heart />

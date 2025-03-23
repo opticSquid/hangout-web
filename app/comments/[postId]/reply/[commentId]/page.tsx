@@ -53,6 +53,7 @@ export default async function Replies({
       <Post post={post} canPlayVideo={true} showDistance={false} />
       <Comment comment={comment} postId={(await params).postId} />
       <AddComment
+        type="reply"
         postId={(await params).postId}
         // prop name should end with Action to receive server actions on client component
         revalidateCommentAction={revalidateReplies}
