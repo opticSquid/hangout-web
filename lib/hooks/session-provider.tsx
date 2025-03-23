@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { getCookie, setCookie, removeCookie } from "typescript-cookie";
-import { SessionState } from "../types/session-store-interface";
+import { SessionState } from "../types/session-state";
 import { SessionActions } from "../types/session-actions-interface";
 import { TokenBody } from "../types/token-body";
 import { jwtDecode } from "jwt-decode";
@@ -12,6 +12,7 @@ const COOKIE_PREFIX = "hangout|";
 const DEFAULT_COOKIE_OPTIONS: CookieAttributes = {
   sameSite: "strict" as const,
   secure: process.env.NODE_ENV === "production",
+  expires: 60,
 };
 
 export default function useSessionProvider(): [SessionState, SessionActions] {
@@ -19,7 +20,7 @@ export default function useSessionProvider(): [SessionState, SessionActions] {
     accessToken: undefined,
     refreshToken: undefined,
     userId: undefined,
-    isTrustedSesion: undefined,
+    isTrustedSession: undefined,
   });
 
   // Load initial cookie values
@@ -27,13 +28,13 @@ export default function useSessionProvider(): [SessionState, SessionActions] {
     const accessToken = getCookie(`${COOKIE_PREFIX}accessToken`);
     const refreshToken = getCookie(`${COOKIE_PREFIX}refreshToken`);
     const userIdStr = getCookie(`${COOKIE_PREFIX}userId`);
-    const isTrustedStr = getCookie(`${COOKIE_PREFIX}isTrustedSesion`);
+    const isTrustedStr = getCookie(`${COOKIE_PREFIX}isTrustedSession`);
 
     setSessionState({
       accessToken: accessToken || undefined,
       refreshToken: refreshToken || undefined,
       userId: userIdStr ? parseInt(userIdStr, 10) : undefined,
-      isTrustedSesion: isTrustedStr ? isTrustedStr === "true" : undefined,
+      isTrustedSession: isTrustedStr ? isTrustedStr === "true" : undefined,
     });
   }, []);
 
@@ -94,7 +95,7 @@ export default function useSessionProvider(): [SessionState, SessionActions] {
 
     setTrustedSession: useCallback(
       (isTrusted: boolean | undefined) => {
-        updateCookie("isTrustedSesion", isTrusted);
+        updateCookie("isTrustedSession", isTrusted);
       },
       [updateCookie]
     ),
@@ -112,14 +113,14 @@ export default function useSessionProvider(): [SessionState, SessionActions] {
       removeCookie(`${COOKIE_PREFIX}accessToken`);
       removeCookie(`${COOKIE_PREFIX}refreshToken`);
       removeCookie(`${COOKIE_PREFIX}userId`);
-      removeCookie(`${COOKIE_PREFIX}isTrustedSesion`);
+      removeCookie(`${COOKIE_PREFIX}isTrustedSession`);
 
       // Reset state
       setSessionState({
         accessToken: undefined,
         refreshToken: undefined,
         userId: undefined,
-        isTrustedSesion: undefined,
+        isTrustedSession: undefined,
       });
     }, []),
   };
