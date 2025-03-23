@@ -1,5 +1,5 @@
 "use client";
-import useSessionProvider from "@/lib/hooks/session-provider";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import {
   DeviceInfo,
   OS,
@@ -31,7 +31,7 @@ export function UntrustedSessionAlert({ open }: openDialog) {
     screen: { height: 0.0, width: 0.0 },
   });
   const router: AppRouterInstance = useRouter();
-  const [sessionState, sessionActions] = useSessionProvider();
+  const [sessionState, sessionActions] = useSessionContext();
   useEffect(() => {
     const userAgent = window.navigator.userAgent;
 
@@ -82,6 +82,7 @@ export function UntrustedSessionAlert({ open }: openDialog) {
       window.removeEventListener("resize", updateDeviceInfo);
     };
   }, []);
+
   async function trustDevice(): Promise<void> {
     setLoading(true);
     try {

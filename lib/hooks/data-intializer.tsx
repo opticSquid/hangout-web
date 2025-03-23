@@ -6,14 +6,14 @@ import {
   OS,
   ScreenDimensions,
 } from "../types/device-identifier-interface";
-import useSessionProvider from "./session-provider";
+import { useSessionContext } from "./session-provider";
 
 export function DataInitalizer() {
   const deviceInfo = useRef<DeviceInfo>({
     os: { name: "", version: "" },
     screen: { height: 0.0, width: 0.0 },
   });
-  const [sessionState, sessionActions] = useSessionProvider();
+  const [sessionState, sessionActions] = useSessionContext();
   const router = useRouter();
   // this useEffect hook collects device info and sets the headers
   useEffect(() => {

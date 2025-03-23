@@ -1,17 +1,17 @@
 "use client";
 
-import useSessionProvider from "@/lib/hooks/session-provider";
-import { Button } from "./ui/button";
-import { useRouter } from "next/navigation";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import {
   DeviceInfo,
   OS,
   ScreenDimensions,
 } from "@/lib/types/device-identifier-interface";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 
 export function Logout() {
-  const [sessionState, sessionActions] = useSessionProvider();
+  const [sessionState, sessionActions] = useSessionContext();
   const router = useRouter();
   const [deviceInfo, setDeviceInfo] = useState<DeviceInfo>({
     os: { name: "", version: "" },

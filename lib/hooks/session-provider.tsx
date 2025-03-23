@@ -1,5 +1,12 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from "react";
 import { getCookie, setCookie, removeCookie } from "typescript-cookie";
 import { SessionState } from "../types/session-state";
 import { SessionActions } from "../types/session-actions-interface";
@@ -7,7 +14,6 @@ import { TokenBody } from "../types/token-body";
 import { jwtDecode } from "jwt-decode";
 import { CookieAttributes } from "../types/cookie-attributes";
 
-// Cookie options configuration
 const COOKIE_PREFIX = "hangout|";
 const DEFAULT_COOKIE_OPTIONS: CookieAttributes = {
   sameSite: "strict" as const,
@@ -15,7 +21,16 @@ const DEFAULT_COOKIE_OPTIONS: CookieAttributes = {
   expires: 60,
 };
 
-export default function useSessionProvider(): [SessionState, SessionActions] {
+interface SessionContextProps {
+  sessionState: SessionState;
+  sessionActions: SessionActions;
+}
+
+const SessionContext = createContext<SessionContextProps | undefined>(
+  undefined
+);
+
+export function SessionProvider({ children }: { children: ReactNode }) {
   const [sessionState, setSessionState] = useState<SessionState>({
     accessToken: undefined,
     refreshToken: undefined,
@@ -23,7 +38,6 @@ export default function useSessionProvider(): [SessionState, SessionActions] {
     isTrustedSession: undefined,
   });
 
-  // Load initial cookie values
   useEffect(() => {
     const accessToken = getCookie(`${COOKIE_PREFIX}accessToken`);
     const refreshToken = getCookie(`${COOKIE_PREFIX}refreshToken`);
@@ -38,22 +52,15 @@ export default function useSessionProvider(): [SessionState, SessionActions] {
     });
   }, []);
 
-  // Utility function to update both state and cookie
   const updateCookie = useCallback(
     <T extends keyof SessionState>(key: T, value: SessionState[T]) => {
-      // Update React state
       setSessionState((prev) => ({ ...prev, [key]: value }));
-
-      // Handle cookie removal
       if (value === undefined) {
         removeCookie(`${COOKIE_PREFIX}${key}`);
         return;
       }
 
-      // Prepare cookie options
       const cookieOptions = { ...DEFAULT_COOKIE_OPTIONS };
-
-      // Extract expiry for token values
       if (
         typeof value === "string" &&
         key.toString().toLowerCase().includes("token")
@@ -63,44 +70,41 @@ export default function useSessionProvider(): [SessionState, SessionActions] {
           cookieOptions.expires = tokenExpiry;
         }
       }
-
-      // Set cookie with the appropriate options
       setCookie(`${COOKIE_PREFIX}${key}`, String(value), cookieOptions);
     },
     []
   );
 
-  // Session actions
   const sessionActions: SessionActions = {
     setAccessToken: useCallback(
-      (newToken: string | undefined) => {
+      (newToken) => {
         updateCookie("accessToken", newToken);
       },
       [updateCookie]
     ),
 
     setRefreshToken: useCallback(
-      (newToken: string | undefined) => {
+      (newToken) => {
         updateCookie("refreshToken", newToken);
       },
       [updateCookie]
     ),
 
     setUserId: useCallback(
-      (newUserId: number | undefined) => {
+      (newUserId) => {
         updateCookie("userId", newUserId);
       },
       [updateCookie]
     ),
 
     setTrustedSession: useCallback(
-      (isTrusted: boolean | undefined) => {
+      (isTrusted) => {
         updateCookie("isTrustedSession", isTrusted);
       },
       [updateCookie]
     ),
 
-    isAuthenticated: useCallback((): boolean => {
+    isAuthenticated: useCallback(() => {
       return Boolean(sessionState.accessToken);
     }, [sessionState.accessToken]),
 
@@ -109,13 +113,10 @@ export default function useSessionProvider(): [SessionState, SessionActions] {
     }, [updateCookie]),
 
     reset: useCallback(() => {
-      // Remove all session cookies
       removeCookie(`${COOKIE_PREFIX}accessToken`);
       removeCookie(`${COOKIE_PREFIX}refreshToken`);
       removeCookie(`${COOKIE_PREFIX}userId`);
       removeCookie(`${COOKIE_PREFIX}isTrustedSession`);
-
-      // Reset state
       setSessionState({
         accessToken: undefined,
         refreshToken: undefined,
@@ -125,11 +126,22 @@ export default function useSessionProvider(): [SessionState, SessionActions] {
     }, []),
   };
 
-  return [sessionState, sessionActions];
+  return (
+    <SessionContext.Provider value={{ sessionState, sessionActions }}>
+      {children}
+    </SessionContext.Provider>
+  );
+}
+
+export function useSessionContext(): [SessionState, SessionActions] {
+  const context = useContext(SessionContext);
+  if (!context) {
+    throw new Error("useSessionContext must be used within a SessionProvider");
+  }
+  return [context.sessionState, context.sessionActions];
 }
 
 export const ExtractExpiryFromToken = (newToken: string): Date => {
   const decodedToken: TokenBody = jwtDecode<TokenBody>(newToken);
-  // ** required to multiply by 1000 to convert from Unix time to Js Date format
   return new Date(decodedToken.exp * 1000);
 };

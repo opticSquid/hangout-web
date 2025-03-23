@@ -2,7 +2,7 @@
 import { LoadingOverlay } from "@/components/loading-overlay";
 import { LoginForm } from "@/components/login-form";
 import { UntrustedSessionAlert } from "@/components/utrusted-session-alert";
-import useSessionProvider from "@/lib/hooks/session-provider";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import {
   DeviceInfo,
   OS,
@@ -24,7 +24,7 @@ export default function Login() {
   const [openUntrustedSessionAlert, setOpenUntrustedSessionAlert] =
     useState(false);
   const router = useRouter();
-  const [, sessionActions] = useSessionProvider();
+  const [, sessionActions] = useSessionContext();
   // collects device info
   useEffect(() => {
     const userAgent = window.navigator.userAgent;

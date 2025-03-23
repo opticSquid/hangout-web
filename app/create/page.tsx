@@ -1,7 +1,7 @@
 "use client";
 import { AddContentDescription } from "@/components/add-content-description";
 import { ShootMedia } from "@/components/shoot-media";
-import useSessionProvider from "@/lib/hooks/session-provider";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import { MediaType } from "@/lib/types/accepted-media-type";
 import dynamic from "next/dynamic";
 import { useState } from "react";
@@ -14,7 +14,7 @@ const AddLocationContainer = dynamic(
   }
 );
 export default function CreatePost() {
-  const [sessionState] = useSessionProvider();
+  const [sessionState] = useSessionContext();
   const [step, setStep] = useState<number>(1);
   const [media, setMedia] = useState<Blob | null>(null);
   const [mediaType, setMediaType] = useState<MediaType>(null);

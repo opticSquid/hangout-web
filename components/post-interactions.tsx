@@ -1,5 +1,5 @@
 "use client";
-import useSessionProvider from "@/lib/hooks/session-provider";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import { HasHearted } from "@/lib/types/has-hearted";
 import { PostInteraction } from "@/lib/types/post-interaction-interface";
 import { Heart, MessageCircle, Share2 } from "lucide-react";
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
 export function PostInteractions(postInteraction: PostInteraction) {
-  const [sessionState] = useSessionProvider();
+  const [sessionState] = useSessionContext();
   const router = usePathname();
   const activeButtonStyle: string =
     "bg-primaryContainer text-onPrimaryContainer rounded-full";

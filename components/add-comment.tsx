@@ -1,6 +1,6 @@
 "use client";
 
-import useSessionProvider from "@/lib/hooks/session-provider";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import { AddCommentRequest } from "@/lib/types/add-comment-request";
 import { SendHorizonal } from "lucide-react";
 import { useState } from "react";
@@ -18,7 +18,7 @@ export function AddComment({
   revalidateCommentAction: () => void;
   parentCommentId?: string;
 }) {
-  const [sessionState] = useSessionProvider();
+  const [sessionState] = useSessionContext();
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   async function onSubmit() {

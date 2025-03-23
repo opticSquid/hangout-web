@@ -1,12 +1,12 @@
 "use client";
 
-import useSessionProvider from "@/lib/hooks/session-provider";
+import { useSessionContext } from "@/lib/hooks/session-provider";
 import { ParticularPostInterface } from "@/lib/types/particular-post-interface";
 import { useEffect, useState } from "react";
 import { Post } from "./post";
 
 export function PostGrid() {
-  const [sessionState] = useSessionProvider();
+  const [sessionState] = useSessionContext();
   const [postList, setPostList] = useState<
     ParticularPostInterface[] | undefined
   >(undefined);
