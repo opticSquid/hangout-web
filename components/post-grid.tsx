@@ -2,9 +2,9 @@
 
 import { useSessionContext } from "@/lib/hooks/session-provider";
 import { ParticularPostInterface } from "@/lib/types/particular-post-interface";
-import { useEffect, useMemo, useState } from "react";
-import { Post } from "./post";
+import { useEffect, useState } from "react";
 import { EmptyFeed } from "./empty-feed";
+import { Post } from "./post";
 
 export function PostGrid() {
   const [sessionState] = useSessionContext();
