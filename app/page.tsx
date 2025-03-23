@@ -115,13 +115,13 @@ export default function PostFeed() {
   }, [postToTriggerDataLoad]);
 
   return (
-    <div className="flex flex-col gap-y-4 snap-mandatory snap-y pb-12">
+    <div className="snap-mandatory snap-y">
       {postList.length > 0 ? (
         postList.map((post) => (
           <div
             key={post.postId}
             post-id={post.postId}
-            className="post-container snap-always snap-start"
+            className="space-y-2 post-container snap-always snap-start"
           >
             <Post
               post={post}

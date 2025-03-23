@@ -17,8 +17,8 @@ export function EmptyFeed() {
     router.push("/create");
   };
   return (
-    <div className="px-2">
-      <Card>
+    <div className="px-2 my-2">
+      <Card className="text-center">
         <CardHeader>
           <CardTitle>🚨 Empty Vibes Alert! 🚨</CardTitle>
           <CardDescription>

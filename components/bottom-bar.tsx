@@ -18,7 +18,7 @@ export function BottomBar() {
   const idleButtonStyle = "bg-transparent text-primary rounded-full";
 
   return (
-    <footer className="bg-background dark:bg-secondary h-[5vh] w-screen drop-shadow-4xl flex flex-row justify-around">
+    <footer className="bg-background dark:bg-secondary drop-shadow-4xl flex flex-row justify-around items-stretch py-1">
       <Button
         className={currentPath === "/" ? activeButtonStyle : idleButtonStyle}
         variant="link"
