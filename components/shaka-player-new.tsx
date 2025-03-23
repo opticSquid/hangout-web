@@ -69,7 +69,7 @@ export default function ShakaPlayer({ filename, autoPlay }: VideoPlayerProps) {
         loop
         id="video"
         ref={videoRef}
-        className="h-full w-full"
+        className="flex-1 w-[100vw] aspect-9/16 object-cover"
       />
     </div>
   );

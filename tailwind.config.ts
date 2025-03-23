@@ -70,6 +70,9 @@ const config: Config = {
       spacing: {
         "14/15": "93.33%",
       },
+      aspectRatio: {
+        "9/16": "9 / 16",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

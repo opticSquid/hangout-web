@@ -48,7 +48,7 @@ export function Post({ post, canPlayVideo, showDistance }: PostControls) {
     fetchProfile();
   }, [post.ownerId]);
   return (
-    <div className="flex flex-col relative">
+    <div className="flex flex-col">
       <PostOwnerInfo owner={postOwner} showDistance={showDistance} />
       {post.contentType.startsWith("video/") ? (
         <ShakaContainer filename={post.filename} autoPlay={canPlayVideo} />
