@@ -32,7 +32,7 @@ export function PhotoViewer({
             ? radius === "small"
               ? "w-10 h-10 rounded-full object-center"
               : "w-32 h-32 rounded-full object-center"
-            : "w-full h-auto"
+            : "flex-1 w-full h-auto"
         }
       />
     </div>
