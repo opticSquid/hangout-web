@@ -1,11 +1,10 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getTimeDifferenceFromUTC } from "@/lib/time-difference";
 import { CommentInterface } from "@/lib/types/comment-interface";
 import { ProfileData } from "@/lib/types/get-profile-response";
 import { Dot, MessageSquareReply } from "lucide-react";
 import Link from "next/link";
-import { Button } from "./ui/button";
 import { PhotoViewer } from "./photo-viewer";
+import { Button } from "./ui/button";
 
 export async function Comment({
   comment,

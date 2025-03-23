@@ -1,15 +1,14 @@
 "use client";
 import { useSessionContext } from "@/lib/hooks/session-provider";
+import { AddCommentInterface } from "@/lib/types/add-comment-interface";
 import { AddCommentRequest } from "@/lib/types/add-comment-request";
+import { ProfileData } from "@/lib/types/get-profile-response";
 import { SendHorizonal } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { PhotoViewer } from "./photo-viewer";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
-import { AddCommentInterface } from "@/lib/types/add-comment-interface";
-import { ProfileData } from "@/lib/types/get-profile-response";
-import { PhotoViewer } from "./photo-viewer";
 
 export function AddComment({
   type,
