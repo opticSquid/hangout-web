@@ -4,6 +4,7 @@ import { useSessionContext } from "@/lib/hooks/session-provider";
 import { ParticularPostInterface } from "@/lib/types/particular-post-interface";
 import { useEffect, useState } from "react";
 import { Post } from "./post";
+import { EmptyFeed } from "./empty-feed";
 
 export function PostGrid() {
   const [sessionState] = useSessionContext();
@@ -28,12 +29,16 @@ export function PostGrid() {
     }
     fetchPosts();
   }, [sessionState.accessToken]);
-  return postList?.map((post) => (
-    <Post
-      post={post}
-      canPlayVideo={true}
-      showDistance={false}
-      key={post.postId}
-    />
-  ));
+  return postList ? (
+    postList?.map((post) => (
+      <Post
+        post={post}
+        canPlayVideo={true}
+        showDistance={false}
+        key={post.postId}
+      />
+    ))
+  ) : (
+    <EmptyFeed />
+  );
 }

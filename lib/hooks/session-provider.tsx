@@ -78,6 +78,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const sessionActions: SessionActions = {
     setAccessToken: useCallback(
       (newToken) => {
+        console.log("calling set access token", newToken);
         updateCookie("accessToken", newToken);
       },
       [updateCookie]
