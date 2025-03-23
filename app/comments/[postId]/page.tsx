@@ -42,6 +42,7 @@ export default async function Comments({
     <div className="flex flex-col gap-y-2 overflow-y-auto pb-14">
       <Post post={post} canPlayVideo={true} showDistance={false} />
       <AddComment
+        type="comment"
         postId={(await params).postId}
         // prop name should end with Action to receive server actions on client component
         revalidateCommentAction={revalidateComments}

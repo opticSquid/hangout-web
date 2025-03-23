@@ -1,26 +1,43 @@
 "use client";
-
 import { useSessionContext } from "@/lib/hooks/session-provider";
 import { AddCommentRequest } from "@/lib/types/add-comment-request";
 import { SendHorizonal } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
+import { AddCommentInterface } from "@/lib/types/add-comment-interface";
+import { ProfileData } from "@/lib/types/get-profile-response";
+import { PhotoViewer } from "./photo-viewer";
 
 export function AddComment({
+  type,
   postId,
   revalidateCommentAction,
   parentCommentId,
-}: {
-  postId: string;
-  revalidateCommentAction: () => void;
-  parentCommentId?: string;
-}) {
+}: AddCommentInterface) {
   const [sessionState] = useSessionContext();
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const [profileData, setProfileData] = useState<ProfileData>();
+  useEffect(() => {
+    if (sessionState.userId) {
+      async function fetchProfile() {
+        const profileResponse: Response = await fetch(
+          `${process.env.NEXT_PUBLIC_PROFILE_API_URL}/profile/${sessionState.userId}`,
+          {
+            headers: new Headers({
+              "Content-Type": "application/json",
+            }),
+          }
+        );
+        const profileData: ProfileData = await profileResponse.json();
+        setProfileData(profileData);
+      }
+      fetchProfile();
+    }
+  }, [sessionState.userId]);
   async function onSubmit() {
     setLoading(true);
     if (!parentCommentId) {
@@ -58,16 +75,21 @@ export function AddComment({
   return (
     <Card className="m-1 p-1 shadow-lg dark:shadow-sm bg-secondary">
       <div className="flex flex-row items-center space-x-2">
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback delayMs={500}>CN</AvatarFallback>
-        </Avatar>
+        {profileData && (
+          <PhotoViewer
+            filename={profileData!.profilePicture.filename}
+            rounded={true}
+            radius="small"
+          />
+        )}
         <div className="flex flex-row grow justify-between">
           <Input
             type="text"
             value={comment}
             onChange={(event) => setComment(event.target.value)}
-            placeholder="Add a comment..."
+            placeholder={
+              type === "comment" ? "Add a comment..." : "Add a reply ..."
+            }
           />
           <Button
             variant="ghost"
