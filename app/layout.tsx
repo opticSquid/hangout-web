@@ -14,7 +14,7 @@ const robotoFlex = Roboto_Flex({
 
 export const metadata: Metadata = {
   title: "HangOut",
-  description: "Chill Bro!",
+  description: "See content from creators near you (Literally)...",
 };
 
 export default function RootLayout({
