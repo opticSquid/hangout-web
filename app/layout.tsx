@@ -7,6 +7,7 @@ import "./globals.css";
 import { CSPostHogProvider } from "./providers";
 import { DataInitalizer } from "@/lib/hooks/data-intializer";
 import { SessionProvider } from "@/lib/hooks/session-provider";
+import { SideBar } from "@/components/SideBar";
 const robotoFlex = Roboto_Flex({
   subsets: ["latin"],
   display: "swap",
@@ -36,10 +37,14 @@ export default function RootLayout({
           >
             <SessionProvider>
               <DataInitalizer />
-              <div className="flex flex-col h-screen">
+              <div className="lg:hidden flex flex-col h-screen">
                 <TopBar />
                 <main className="flex-1 overflow-y-auto">{children}</main>
                 <BottomBar />
+              </div>
+              <div className="hidden lg:flex flex-row h-screen w-screen overflow-hidden gap-x-4">
+                <SideBar />
+                <main className="basis-2/5 overflow-y-auto">{children}</main>
               </div>
             </SessionProvider>
           </ThemeProvider>
