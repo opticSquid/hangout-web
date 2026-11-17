@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN pnpm install
+RUN pnpm install --dangerously-allow-all-builds
 RUN pnpm run build
 
 # Stage 2: Serve with NGINX
